@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCategoryFollowerDto {
   @IsNotEmpty()
-  @IsNumber()
-  user_id: number;
+  @IsString()
+  user_id: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  category_id: number;
+  @IsString()
+  category_id: string;
 }

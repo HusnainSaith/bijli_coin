@@ -21,8 +21,8 @@ export class DraftsService {
     return this.draftRepository.find({ relations: ['user'] });
   }
 
-  async findOne(id: number): Promise<Draft> {
-    if (!id || id <= 0) {
+  async findOne(id: string): Promise<Draft> {
+    if (!id ) {
       throw new BadRequestException('Invalid draft ID');
     }
     const draft = await this.draftRepository.findOne({
@@ -35,7 +35,7 @@ export class DraftsService {
     return draft;
   }
 
-  async update(id: number, updateDraftDto: UpdateDraftDto): Promise<Draft> {
+  async update(id: string, updateDraftDto: UpdateDraftDto): Promise<Draft> {
     const result = await this.draftRepository.update(id, updateDraftDto);
     if (result.affected === 0) {
       throw new NotFoundException('Draft not found');
@@ -43,15 +43,15 @@ export class DraftsService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.draftRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Draft not found');
     }
   }
 
-  async findByUser(userId: number): Promise<Draft[]> {
-    if (!userId || userId <= 0) {
+  async findByUser(userId: string): Promise<Draft[]> {
+    if (!userId ) {
       throw new BadRequestException('Invalid user ID');
     }
     return this.draftRepository.find({

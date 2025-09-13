@@ -17,8 +17,8 @@ export class CommentRepliesService {
     return this.commentReplyRepository.save(reply);
   }
 
-  async findOne(id: number): Promise<CommentReply> {
-    if (!id || id <= 0) {
+  async findOne(id: string): Promise<CommentReply> {
+    if (!id ) {
       throw new BadRequestException('Invalid comment reply ID');
     }
     const reply = await this.commentReplyRepository.findOne({
@@ -31,7 +31,7 @@ export class CommentRepliesService {
     return reply;
   }
 
-  async update(id: number, updateCommentReplyDto: UpdateCommentReplyDto): Promise<CommentReply> {
+  async update(id: string, updateCommentReplyDto: UpdateCommentReplyDto): Promise<CommentReply> {
     const result = await this.commentReplyRepository.update(id, updateCommentReplyDto);
     if (result.affected === 0) {
       throw new NotFoundException('Comment reply not found');
@@ -39,15 +39,15 @@ export class CommentRepliesService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.commentReplyRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Comment reply not found');
     }
   }
 
-  async findByComment(commentId: number): Promise<CommentReply[]> {
-    if (!commentId || commentId <= 0) {
+  async findByComment(commentId: string): Promise<CommentReply[]> {
+    if (!commentId ) {
       throw new BadRequestException('Invalid comment ID');
     }
     return this.commentReplyRepository.find({

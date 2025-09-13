@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsNumber, IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsBoolean, IsEmail } from 'class-validator';
 
 export class CreateNotificationDto {
-  @IsNotEmpty()
-  @IsNumber()
-  user_id: number;
+  @IsOptional()
+  @IsString()
+  user_id: string;
 
   @IsNotEmpty()
   @IsString()
@@ -20,4 +20,8 @@ export class CreateNotificationDto {
   @IsOptional()
   @IsBoolean()
   is_read?: boolean;
+
+  @IsOptional()
+  @IsEmail()
+  userEmail?: string;
 }

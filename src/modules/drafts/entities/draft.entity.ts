@@ -5,10 +5,10 @@ import { Category } from '../../categories/entities/category.entity';
 @Entity('drafts')
 export class Draft {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column({ nullable: true })
   title: string;
@@ -17,7 +17,7 @@ export class Draft {
   content: string;
 
   @Column({ nullable: true })
-  category_id: number;
+  category_id: string;
 
   @CreateDateColumn()
   created_at: Date;

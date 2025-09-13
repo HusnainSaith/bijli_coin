@@ -1,6 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Category } from '../../categories/entities/category.entity';
+import { PostMedia } from 'src/modules/post-media/entities/post-media.entity';
+import { PostTag } from 'src/modules/post-tags/entities/post-tag.entity';
+import { Reaction } from 'src/modules/reactions/entities/reaction.entity';
+import { Comment } from 'src/modules/comments/entities/comment.entity';
 
 export enum PostStatus {
   DRAFT = 'draft',
@@ -59,4 +63,21 @@ export class Post {
   @ManyToOne(() => Category, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'category_id' })
   category: Category;
+
+  @OneToMany(() => Comment, (comment) => comment.post, { cascade: true })
+  comments: Comment[];
+
+  @OneToMany(() => PostMedia, (media) => media.post, { cascade: true })
+  media: PostMedia[];
+
+  @OneToMany(() => PostTag, (tag) => tag.post, { cascade: true })
+  tags: PostTag[];
+
+  @OneToMany(() => Reaction, (reaction) => reaction.post, { cascade: true })
+  reactions: Reaction[];
+
+  @OneToMany(() => Post, post => post.user)
+posts: Post[];
+
 }
+

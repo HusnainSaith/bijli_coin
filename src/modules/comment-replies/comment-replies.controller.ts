@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
 import { CommentRepliesService } from './comment-replies.service';
 import { CreateCommentReplyDto } from './dto/create-comment-reply.dto';
 import { UpdateCommentReplyDto } from './dto/update-comment-reply.dto';
@@ -19,22 +19,22 @@ export class CommentRepliesController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id') id: string) {
     return this.commentRepliesService.findOne(id);
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateCommentReplyDto: UpdateCommentReplyDto) {
+  async update(@Param('id') id: string, @Body() updateCommentReplyDto: UpdateCommentReplyDto) {
     return this.commentRepliesService.update(id, updateCommentReplyDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id') id: string) {
     return this.commentRepliesService.remove(id);
   }
 
   @Get('comment/:commentId')
-  async findByComment(@Param('commentId', ParseIntPipe) commentId: number) {
+  async findByComment(@Param('commentId') commentId: string) {
     return this.commentRepliesService.findByComment(commentId);
   }
 }

@@ -16,29 +16,27 @@ export class AuthorFollowersService {
     return this.authorFollowerRepository.save(authorFollower);
   }
 
-  async getFollowers(authorId: number) {
-    const parsedAuthorId = Number(authorId);
-    if (!parsedAuthorId || isNaN(parsedAuthorId) || parsedAuthorId <= 0) {
+  async getFollowers(authorId: string) {
+    if (!authorId || authorId.trim() === '') {
       throw new BadRequestException('Invalid author ID');
     }
     return this.authorFollowerRepository.find({
-      where: { author_id: parsedAuthorId },
+      where: { author_id: authorId },
       relations: ['follower']
     });
   }
 
-  async getFollowing(userId: number) {
-    const parsedUserId = Number(userId);
-    if (!parsedUserId || isNaN(parsedUserId) || parsedUserId <= 0) {
+  async getFollowing(userId: string) {
+    if (!userId || userId.trim() === '') {
       throw new BadRequestException('Invalid user ID');
     }
     return this.authorFollowerRepository.find({
-      where: { follower_id: parsedUserId },
+      where: { follower_id: userId },
       relations: ['author']
     });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.authorFollowerRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Follow relationship not found');

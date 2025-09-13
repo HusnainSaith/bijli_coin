@@ -4,12 +4,16 @@ import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Post } from '../posts/entities/post.entity';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
   ) {}
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
@@ -47,13 +51,17 @@ async remove(id: string): Promise<void> {
   }
 }
 
-  async getPosts(categoryId: string) {
-    if (!categoryId ) {
-      throw new BadRequestException('Invalid category ID');
-    }
-    // Return empty array - implement when Post entity has categoryId relation
-    return [];
+async getPosts(categoryId: string) {
+  if (!categoryId) {
+    throw new BadRequestException('Invalid category ID');
   }
+
+  return this.postRepository.find({
+    where: { category: { id: categoryId } },
+    relations: ['user', 'category'],  // ✅ use "user" instead of "author"
+  });
+}
+
 
   async getFollowers(categoryId: string) {
     if (!categoryId) {

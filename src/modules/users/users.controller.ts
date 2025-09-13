@@ -65,7 +65,7 @@ async getFollowers(@Param('id') id: string) {
 
 @Get(':id/following')
 async getFollowing(@Param('id') id: string) {
-  return this.usersService.getFollowing(id);
+  return this.usersService.getAllFollowing(id);
 }
 
 @Get(':id/notifications')

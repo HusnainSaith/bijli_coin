@@ -18,12 +18,12 @@ export class FollowersController {
   }
 
   @Get('user/:userId')
-  async findByUser(@Param('userId', ParseIntPipe) userId: number) {
-    return this.followersService.findByUser(userId);
-  }
+async findByUser(@Param('userId') userId: string) {
+  return this.followersService.findByUser(userId);
+}
 
-  @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.followersService.remove(id);
-  }
+@Delete(':id')
+async remove(@Param('id') id: string) {
+  return this.followersService.remove(id);
+}
 }

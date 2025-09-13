@@ -5,16 +5,16 @@ import { Post } from '../../posts/entities/post.entity';
 @Entity('comments')
 export class Comment {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column()
-  post_id: number;
+  post_id: string;
 
   @Column({ nullable: true })
-  parent_id: number;
+  parent_id: string;
 
   @Column('text')
   content: string;
@@ -42,4 +42,6 @@ export class Comment {
   @ManyToOne(() => Comment, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'parent_id' })
   parent: Comment;
+
+  
 }

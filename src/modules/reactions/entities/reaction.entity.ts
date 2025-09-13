@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Post } from 'src/modules/posts/entities/post.entity';
 
 export enum ReactionType {
   LIKE = 'like',
@@ -33,4 +34,7 @@ export class Reaction {
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToOne(() => Post, (post) => post.reactions, { onDelete: 'CASCADE' })
+  post: Post;
 }

@@ -4,12 +4,16 @@ import { Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { CommentReply } from '../comment-replies/entities/comment-reply.entity';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
+
+    @InjectRepository(CommentReply)
+      private commentReplyRepository: Repository<CommentReply>,
   ) {}
 
   async create(createCommentDto: CreateCommentDto): Promise<Comment> {
@@ -21,8 +25,8 @@ export class CommentsService {
     return this.commentRepository.find({ relations: ['user', 'post'] });
   }
 
-  async findOne(id: number): Promise<Comment> {
-    if (!id || id <= 0) {
+  async findOne(id: string): Promise<Comment> {
+    if (!id ) {
       throw new BadRequestException('Invalid comment ID');
     }
     const comment = await this.commentRepository.findOne({
@@ -35,7 +39,7 @@ export class CommentsService {
     return comment;
   }
 
-  async update(id: number, updateCommentDto: UpdateCommentDto): Promise<Comment> {
+  async update(id: string, updateCommentDto: UpdateCommentDto): Promise<Comment> {
     const result = await this.commentRepository.update(id, updateCommentDto);
     if (result.affected === 0) {
       throw new NotFoundException('Comment not found');
@@ -43,18 +47,29 @@ export class CommentsService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.commentRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Comment not found');
     }
   }
 
-  async getReplies(commentId: number) {
-    if (!commentId || commentId <= 0) {
-      throw new BadRequestException('Invalid comment ID');
-    }
-    // Return empty array - implement when CommentReply entity is properly related
-    return [];
+async getReplies(commentId: string) {
+  if (!commentId) {
+    throw new BadRequestException('Invalid comment ID');
   }
+
+  const replies = await this.commentReplyRepository.find({
+    where: { comment_id: commentId },
+    relations: ['user'],  // include user info
+    order: { created_at: 'ASC' },
+  });
+
+  if (!replies || replies.length === 0) {
+    throw new NotFoundException('No replies found for this comment');
+  }
+
+  return replies;
+}
+
 }

@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateDraftDto {
   @IsNotEmpty()
-  @IsNumber()
-  user_id: number;
+  @IsString()
+  user_id: string;
 
   @IsOptional()
   @IsString()
@@ -14,6 +14,6 @@ export class CreateDraftDto {
   content?: string;
 
   @IsOptional()
-  @IsNumber()
-  category_id?: number;
+  @IsString()
+  category_id?: string;
 }

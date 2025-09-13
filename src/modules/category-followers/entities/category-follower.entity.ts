@@ -5,13 +5,13 @@ import { Category } from '../../categories/entities/category.entity';
 @Entity('category_followers')
 export class CategoryFollower {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column()
-  category_id: number;
+  category_id: string;
 
   @CreateDateColumn()
   created_at: Date;

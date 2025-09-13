@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, Param, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
 import { CategoryFollowersService } from './category-followers.service';
 import { CreateCategoryFollowerDto } from './dto/create-category-follower.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -18,17 +18,17 @@ export class CategoryFollowersController {
   }
 
   @Get('category/:categoryId')
-  async getFollowers(@Param('categoryId', ParseIntPipe) categoryId: number) {
+  async getFollowers(@Param('categoryId') categoryId: string) {
     return this.categoryFollowersService.getFollowers(categoryId);
   }
 
   @Get('user/:userId')
-  async getFollowedCategories(@Param('userId', ParseIntPipe) userId: number) {
-    return this.categoryFollowersService.getFollowedCategories(userId);
+  async getFollowedCategories(@Param('userId') userId: string) {
+    return this.categoryFollowersService.getUserFollowedCategories(userId);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id') id: string) {
     return this.categoryFollowersService.remove(id);
   }
 }

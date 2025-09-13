@@ -4,12 +4,43 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { Post } from '../posts/entities/post.entity';
+import { Draft } from '../drafts/entities/draft.entity';
+import { Bookmark } from '../bookmarks/entities/bookmark.entity';
+import { Follower } from '../followers/entities/follower.entity';
+import { CategoryFollower } from '../category-followers/entities/category-follower.entity';
+import { AuthorFollower } from '../author-followers/entities/author-follower.entity';
+import { Notification } from '../notifications/entities/notification.entity';
+import { Category } from '../categories/entities/category.entity';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+     @InjectRepository(Post)
+    private postRepository: Repository<Post>,
+
+    @InjectRepository(Draft)
+    private draftRepository: Repository<Draft>,
+
+    @InjectRepository(Bookmark)
+    private bookmarkRepository: Repository<Bookmark>,
+
+    @InjectRepository(Follower)
+    private followerRepository: Repository<Follower>,
+
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
+
+    @InjectRepository(CategoryFollower)
+    private categoryFollowerRepository: Repository<CategoryFollower>,
+
+    @InjectRepository(AuthorFollower)
+    private authorFollowerRepository: Repository<AuthorFollower>,
+
+    @InjectRepository(Notification)
+    private readonly notificationRepository: Repository<Notification>, 
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -30,7 +61,7 @@ export class UsersService {
     const user = await this.userRepository.findOne({
       where: { id },
     });
-    console.log('UsersService findOne result:', user); // Debug log
+   
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -75,56 +106,103 @@ export class UsersService {
   }
 
   async getPosts(userId: string) {
-    if (!userId) {
-      throw new BadRequestException('Invalid user ID');
-    }
-    // Return empty array - implement when Post entity is properly related
-    return [];
-  }
+  if (!userId) throw new BadRequestException('Invalid user ID');
 
-  async getDrafts(userId:string) {
-    if (!userId) {
-      throw new BadRequestException('Invalid user ID');
-    }
-    // Return empty array - implement when Draft entity is properly related
-    return [];
-  }
-
-  async getBookmarks(userId:string) {
-    if (!userId) {
-      throw new BadRequestException('Invalid user ID');
-    }
-    // Return empty array - implement when Bookmark entity is properly related
-    return [];
-  }
-
-  async getFollowers(userId:string) {
-    if (!userId) {
-      throw new BadRequestException('Invalid user ID');
-    }
-    // Return empty array - implement when Follower entity is properly related
-    return [];
-  }
-
-  async getFollowing(userId:string) {
-    if (!userId ) {
-      throw new BadRequestException('Invalid user ID');
-    }
-    // Return empty array - implement when Following entity is properly related
-    return [];
-  }
-
-  async getNotifications(userId:string) {
-    if (!userId) {
-      throw new BadRequestException('Invalid user ID');
-    }
-    // Return empty array - implement when Notification entity is properly related
-    return [];
-  }
-  async findOneWithRoleAndPermissions(userId: string) {
-  return this.userRepository.findOne({
-    where: { id: userId },
-    relations: ['role', 'role.rolePermissions', 'role.rolePermissions.permission'],
+  return this.postRepository.find({
+    where: { user: { id: String(userId) } }, // relation to User entity
+    relations: ['category', 'comments', 'reactions'],
   });
+}
+
+async getDrafts(userId: string) {
+  if (!userId) throw new BadRequestException('Invalid user ID');
+
+  return this.draftRepository.find({
+    where: { user: { id: String(userId) } },
+  });
+}
+
+async getBookmarks(userId: string) {
+  if (!userId) throw new BadRequestException('Invalid user ID');
+
+  return this.bookmarkRepository.find({
+    where: { user: { id: String(userId) } },
+    relations: ['post'],
+  });
+}
+
+async getFollowers(userId: string) {
+  if (!userId || userId.trim() === '') {
+    throw new BadRequestException('Invalid user ID');
   }
+
+  const followers = await this.followerRepository.find({
+    where: { following_id: userId, following_type: 'user' }, // ensure it's "user"
+    relations: ['follower'], // loads follower details
+    order: { created_at: 'DESC' }, // newest followers first
+  });
+
+  if (!followers.length) {
+    throw new NotFoundException(`No followers found for user ID ${userId}`);
+  }
+
+  return followers;
+}
+async getAllFollowing(userId: string) {
+  const postFollows = await this.followerRepository.find({
+    where: { follower_id: userId },
+  });
+
+  const categoryFollows = await this.categoryFollowerRepository.find({
+    where: { user_id: userId },
+    relations: ['category'],
+  });
+
+  const authorFollows = await this.authorFollowerRepository.find({
+    where: { follower_id: userId },
+    relations: ['author'],
+  });
+
+  const posts = [];
+  for (const follow of postFollows) {
+    if (follow.following_type === 'posts') {
+      const post = await this.postRepository.findOne({ where: { id: follow.following_id } });
+      if (post) {
+        posts.push({
+          id: follow.id,
+          type: 'post',
+          followed: post,
+          createdAt: follow.created_at,
+        });
+      }
+    }
+  }
+
+  return {
+    posts,
+    categories: categoryFollows.map(f => ({
+      id: f.id,
+      type: 'category',
+      followed: f.category,
+      createdAt: f.created_at,
+    })),
+    authors: authorFollows.map(f => ({
+      id: f.id,
+      type: 'author',
+      followed: f.author,
+      createdAt: f.created_at,
+    })),
+  };
+}
+
+
+
+async getNotifications(userId: string) {
+  if (!userId) throw new BadRequestException('Invalid user ID');
+
+ return this.notificationRepository.find({
+  where: { userId: userId } as any,
+  order: { createdAt: 'DESC' } as any,
+});
+}
 }

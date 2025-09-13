@@ -3,11 +3,11 @@ import { User } from '../../users/entities/user.entity';
 
 @Entity('notifications')
 export class Notification {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
-  user_id: number;
+  @Column({ name: 'user_id', nullable: true })
+  userId: string;
 
   @Column()
   type: string;
@@ -18,11 +18,11 @@ export class Notification {
   @Column('text')
   message: string;
 
-  @Column({ default: false })
-  is_read: boolean;
+  @Column({ default: false, name: 'is_read' })
+  isRead: boolean;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })

@@ -4,13 +4,13 @@ import { User } from '../../users/entities/user.entity';
 @Entity('author_followers')
 export class AuthorFollower {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  follower_id: number;
+  follower_id: string;
 
   @Column()
-  author_id: number;
+  author_id: string;
 
   @CreateDateColumn()
   created_at: Date;

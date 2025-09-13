@@ -16,17 +16,17 @@ export class FollowersService {
     return this.followerRepository.save(follower);
   }
 
-  async findByUser(userId: number): Promise<Follower[]> {
-    if (!userId || userId <= 0) {
+  async findByUser(userId: string): Promise<Follower[]> {
+    if (!userId) {
       throw new BadRequestException('Invalid user ID');
     }
     return this.followerRepository.find({
-      where: { follower_id: userId },
-      relations: ['user']
+      where: { follower_id: userId }, // UUID string
+      relations: ['follower', 'following'],
     });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.followerRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Follower relationship not found');

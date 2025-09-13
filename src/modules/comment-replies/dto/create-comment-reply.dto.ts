@@ -1,15 +1,12 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsUUID, IsString } from 'class-validator';
 
 export class CreateCommentReplyDto {
-  @IsNotEmpty()
-  @IsNumber()
-  comment_id: number;
+  @IsUUID()
+  comment_id: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  user_id: number;
+  @IsUUID()
+  user_id: string;
 
-  @IsNotEmpty()
   @IsString()
   content: string;
 }

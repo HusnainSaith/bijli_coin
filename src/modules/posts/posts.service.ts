@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,16 +19,26 @@ export class PostsService {
     private postRepository: Repository<Post>,
   ) {}
 
-  async create(createPostDto: CreatePostDto): Promise<Post> {
-    const post = this.postRepository.create({
-      ...createPostDto,
-      featured_image: createPostDto.featured_image || undefined,
-      views_count: 0,
-      likes_count: 0,
-      comments_count: 0,
-    });
+async create(createPostDto: CreatePostDto): Promise<Post> {
+    try {
+      const post = this.postRepository.create({
+        ...createPostDto,
+        featured_image: createPostDto.featured_image || undefined,
+        views_count: 0,
+        likes_count: 0,
+        comments_count: 0,
+      });
 
-    return this.postRepository.save(post);
+      return await this.postRepository.save(post);
+    } catch (error) {
+      if (error.code === '23505') {
+        // Postgres unique constraint violation
+        throw new ConflictException(
+          error.detail || 'Post with this slug already exists',
+        );
+      }
+      throw error;
+    }
   }
   async findAll(filters?: { categoryId?: string; userId?: string }): Promise<Post[]> {
     const query = this.postRepository.createQueryBuilder('post');
@@ -77,31 +88,70 @@ export class PostsService {
     }
   }
 
-  async getComments(postId: string) {
-    if (!postId) {
-      throw new BadRequestException('Invalid post ID');
-    }
-    return []; // implement when Comment entity is related
+async getComments(postId: string) {
+  if (!postId) {
+    throw new BadRequestException('Invalid post ID');
   }
 
-  async getMedia(postId: string) {
-    if (!postId) {
-      throw new BadRequestException('Invalid post ID');
-    }
-    return []; // implement when PostMedia entity is related
+  const post = await this.postRepository.findOne({
+    where: { id: postId },
+    relations: ['comments'],
+  });
+
+  if (!post) {
+    throw new NotFoundException(`Post not found with id: ${postId}`);
   }
 
-  async getTags(postId: string) {
-    if (!postId) {
-      throw new BadRequestException('Invalid post ID');
-    }
-    return []; // implement when PostTag entity is related
-  }
-
-  async getReactions(postId: string) {
-    if (!postId) {
-      throw new BadRequestException('Invalid post ID');
-    }
-    return []; // implement when Reaction entity is related
-  }
+  return post.comments;
 }
+
+async getMedia(postId: string) {
+  if (!postId) {
+    throw new BadRequestException('Invalid post ID');
+  }
+
+  const post = await this.postRepository.findOne({
+    where: { id: postId },
+    relations: ['media'],
+  });
+
+  if (!post) {
+    throw new NotFoundException(`Post not found with id: ${postId}`);
+  }
+
+  return post.media;
+}
+
+async getTags(postId: string) {
+  if (!postId) {
+    throw new BadRequestException('Invalid post ID');
+  }
+
+  const post = await this.postRepository.findOne({
+    where: { id: postId },
+    relations: ['tags'],
+  });
+
+  if (!post) {
+    throw new NotFoundException(`Post not found with id: ${postId}`);
+  }
+
+  return post.tags;
+}
+
+async getReactions(postId: string) {
+  if (!postId) {
+    throw new BadRequestException('Invalid post ID');
+  }
+
+  const post = await this.postRepository.findOne({
+    where: { id: postId },
+    relations: ['reactions'],
+  });
+
+  if (!post) {
+    throw new NotFoundException(`Post not found with id: ${postId}`);
+  }
+
+  return post.reactions;
+}}

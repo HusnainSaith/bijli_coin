@@ -18,18 +18,18 @@ export class NotificationsController {
     }
   }
 
-  @Get('user/:userId')
-  async findByUser(@Param('userId', ParseIntPipe) userId: number) {
+   @Get('user/:userId')
+  async findByUser(@Param('userId') userId: string) {
     return this.notificationsService.findByUser(userId);
   }
 
   @Patch(':id/read')
-  async markAsRead(@Param('id', ParseIntPipe) id: number) {
+  async markAsRead(@Param('id') id: string) {
     return this.notificationsService.markAsRead(id);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id') id: string) {
     return this.notificationsService.remove(id);
   }
 }

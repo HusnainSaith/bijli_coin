@@ -83,7 +83,7 @@ export class AuthService {
 
     const payload = { sub: user.id, email: user.email, role_id: user.role_id };
 
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '7d' });
     const refreshToken = await this.generateRefreshToken(user.id);
 
     const { password, ...userResult } = user;
@@ -113,7 +113,7 @@ export class AuthService {
     }
 
     const payload = { sub: refreshToken.user.id, email: refreshToken.user.email };
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     return {
       success: true,
