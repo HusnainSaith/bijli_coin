@@ -1,15 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, UseInterceptors } from '@nestjs/common';
 import { AnswersService } from './answers.service';
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
+import { Audit } from '../../common/decorators/audit.decorator';
 
 @Controller('answers')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(AuditInterceptor)
 export class AnswersController {
   constructor(private readonly answersService: AnswersService) {}
 
   @Post()
+  @Audit({ action: 'CREATE_ANSWER', resource: 'Answer' })
   async create(@Body() createAnswerDto: CreateAnswerDto) {
     try {
       return await this.answersService.create(createAnswerDto);
@@ -24,22 +28,24 @@ export class AnswersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id') id: string) {
     return this.answersService.findOne(id);
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateAnswerDto: UpdateAnswerDto) {
+  @Audit({ action: 'UPDATE_ANSWER', resource: 'Answer' })
+  async update(@Param('id') id: string, @Body() updateAnswerDto: UpdateAnswerDto) {
     return this.answersService.update(id, updateAnswerDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  @Audit({ action: 'DELETE_ANSWER', resource: 'Answer' })
+  async remove(@Param('id') id: string) {
     return this.answersService.remove(id);
   }
 
   @Get('question/:questionId')
-  async findByQuestion(@Param('questionId', ParseIntPipe) questionId: number) {
+  async findByQuestion(@Param('questionId') questionId: string) {
     return this.answersService.findByQuestion(questionId);
   }
 }

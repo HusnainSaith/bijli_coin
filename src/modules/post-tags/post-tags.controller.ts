@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, Param, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
 import { PostTagsService } from './post-tags.service';
 import { CreatePostTagDto } from './dto/create-post-tag.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -18,12 +18,12 @@ export class PostTagsController {
   }
 
   @Get('post/:postId')
-  async findByPost(@Param('postId', ParseIntPipe) postId: number) {
+  async findByPost(@Param('postId') postId: string) {
     return this.postTagsService.findByPost(postId);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id') id: string) {
     return this.postTagsService.remove(id);
   }
 }

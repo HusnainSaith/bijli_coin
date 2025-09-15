@@ -16,8 +16,8 @@ export class PostTagsService {
     return this.postTagRepository.save(postTag);
   }
 
-  async findByPost(postId: number): Promise<PostTag[]> {
-    if (!postId || postId <= 0) {
+  async findByPost(postId: string): Promise<PostTag[]> {
+    if (!postId ) {
       throw new BadRequestException('Invalid post ID');
     }
     return this.postTagRepository.find({
@@ -26,10 +26,8 @@ export class PostTagsService {
     });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<boolean> {
     const result = await this.postTagRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException('Post tag relationship not found');
-    }
+    return (result.affected ?? 0) > 0;
   }
 }

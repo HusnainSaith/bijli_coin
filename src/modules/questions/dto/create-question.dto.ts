@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber, IsEnum, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
 
 export enum QuestionStatus {
   OPEN = 'open',
@@ -8,8 +8,8 @@ export enum QuestionStatus {
 
 export class CreateQuestionDto {
   @IsNotEmpty()
-  @IsNumber()
-  user_id: number;
+  @IsString()
+  user_id: string;
 
   @IsNotEmpty()
   @IsString()
@@ -24,8 +24,8 @@ export class CreateQuestionDto {
   content: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  category_id: number;
+  @IsString()
+  category_id: string;
 
   @IsOptional()
   @IsEnum(QuestionStatus)

@@ -2,8 +2,8 @@ import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 
 export class CreateMediaDto {
   @IsNotEmpty()
-  @IsNumber()
-  user_id: number;
+  @IsString()
+  user_id:string;
 
   @IsNotEmpty()
   @IsString()

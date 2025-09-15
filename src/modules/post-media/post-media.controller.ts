@@ -18,12 +18,12 @@ export class PostMediaController {
   }
 
   @Get('post/:postId')
-  async findByPost(@Param('postId', ParseIntPipe) postId: number) {
+  async findByPost(@Param('postId') postId: string) {
     return this.postMediaService.findByPost(postId);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id') id: string) {
     return this.postMediaService.remove(id);
   }
 }

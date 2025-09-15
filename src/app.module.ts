@@ -25,7 +25,7 @@ import { RolesModule } from './modules/roles/roles.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { ViewsModule } from './modules/views/views.module';
-import { TrackingModule } from './modules/tracking/tracking.module';
+// import { TrackingModule } from './modules/tracking/tracking.module';
 import { RecommendationsModule } from './modules/recommendations/recommendations.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { AuthorFollowersModule } from './modules/author-followers/author-followers.module';
@@ -34,7 +34,7 @@ import { CommentRepliesModule } from './modules/comment-replies/comment-replies.
 import { PostMediaModule } from './modules/post-media/post-media.module';
 import { PostTagsModule } from './modules/post-tags/post-tags.module';
 import { RolePermissionsModule } from './modules/role-permissions/role-permissions.module';
-import { FollowersModule } from './modules/followers/followers.module';
+// import { FollowersModule } from './modules/followers/followers.module';
 
 
 
@@ -72,7 +72,7 @@ import { FollowersModule } from './modules/followers/followers.module';
     PermissionsModule,
     ReportsModule,
     ViewsModule,
-    TrackingModule,
+    // TrackingModule,
     RecommendationsModule,
     AuditLogsModule,
     AuthorFollowersModule,
@@ -81,7 +81,7 @@ import { FollowersModule } from './modules/followers/followers.module';
     PostMediaModule,
     PostTagsModule,
     RolePermissionsModule,
-    FollowersModule,
+    // FollowersModule,
   ],
   controllers: [AppController],
   providers: [

@@ -16,8 +16,8 @@ export class BookmarksService {
     return this.bookmarkRepository.save(bookmark);
   }
 
-  async findByUser(userId: number): Promise<Bookmark[]> {
-    if (!userId || userId <= 0) {
+  async findByUser(userId: string): Promise<Bookmark[]> {
+    if (!userId) {
       throw new BadRequestException('Invalid user ID');
     }
     return this.bookmarkRepository.find({
@@ -26,9 +26,9 @@ export class BookmarksService {
     });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.bookmarkRepository.delete(id);
-    if (result.affected === 0) {
+    if (result.affected) {
       throw new NotFoundException('Bookmark not found');
     }
   }

@@ -5,13 +5,13 @@ import { User } from '../../users/entities/user.entity';
 @Entity('answers')
 export class Answer {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  question_id: number;
+  question_id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column('text')
   content: string;
@@ -20,7 +20,7 @@ export class Answer {
   is_accepted: boolean;
 
   @Column({ default: 0 })
-  votes_count: number;
+  votes_count: string;
 
   @CreateDateColumn()
   created_at: Date;

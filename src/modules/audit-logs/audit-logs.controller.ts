@@ -23,7 +23,7 @@ export class AuditLogsController {
   }
 
   @Get('user/:userId')
-  async findByUser(@Param('userId', ParseIntPipe) userId: number) {
+  async findByUser(@Param('userId') userId: string) {
     return this.auditLogsService.findByUser(userId);
   }
 }

@@ -5,13 +5,13 @@ import { Post } from '../../posts/entities/post.entity';
 @Entity('bookmarks')
 export class Bookmark {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column()
-  post_id: number;
+  post_id: string;
 
   @CreateDateColumn()
   created_at: Date;

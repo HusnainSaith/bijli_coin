@@ -16,8 +16,8 @@ export class ReactionsService {
     return this.reactionRepository.save(reaction);
   }
 
-  async findByPost(postId: number): Promise<Reaction[]> {
-    if (!postId || postId <= 0) {
+  async findByPost(postId: string): Promise<Reaction[]> {
+    if (!postId ) {
       throw new BadRequestException('Invalid post ID');
     }
     return this.reactionRepository.find({
@@ -26,7 +26,10 @@ export class ReactionsService {
     });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
+    if (!id) {
+      throw new BadRequestException('Invalid reaction ID');
+    }
     const result = await this.reactionRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Reaction not found');

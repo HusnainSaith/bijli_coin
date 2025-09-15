@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { Question } from './entities/question.entity';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
+import { Answer } from '../answers/entities/answer.entity';
 
 @Injectable()
 export class QuestionsService {
   constructor(
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
+    @InjectRepository(Answer)
+    private answersRepository:Repository<Answer>,
   ) {}
 
   async create(createQuestionDto: CreateQuestionDto): Promise<Question> {
@@ -21,13 +24,13 @@ export class QuestionsService {
     return this.questionRepository.find({ relations: ['user'] });
   }
 
-  async findOne(id: number): Promise<Question> {
-    if (!id || id <= 0) {
+  async findOne(id: string): Promise<Question> {
+    if (!id ) {
       throw new BadRequestException('Invalid question ID');
     }
     const question = await this.questionRepository.findOne({
       where: { id },
-      relations: ['user', 'answers']
+      relations: ['user']
     });
     if (!question) {
       throw new NotFoundException('Question not found');
@@ -35,7 +38,7 @@ export class QuestionsService {
     return question;
   }
 
-  async update(id: number, updateQuestionDto: UpdateQuestionDto): Promise<Question> {
+  async update(id: string, updateQuestionDto: UpdateQuestionDto): Promise<Question> {
     const result = await this.questionRepository.update(id, updateQuestionDto);
     if (result.affected === 0) {
       throw new NotFoundException('Question not found');
@@ -43,18 +46,12 @@ export class QuestionsService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.questionRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Question not found');
     }
   }
 
-  async getAnswers(questionId: number) {
-    if (!questionId || questionId <= 0) {
-      throw new BadRequestException('Invalid question ID');
-    }
-    // Return empty array - implement when Answer entity is properly related
-    return [];
-  }
+ 
 }

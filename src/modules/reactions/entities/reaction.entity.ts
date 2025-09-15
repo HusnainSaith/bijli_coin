@@ -14,16 +14,16 @@ export enum ReactionType {
 @Entity('reactions')
 export class Reaction {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column()
   reactable_type: string;
 
   @Column()
-  reactable_id: number;
+  reactable_id: string;
 
   @Column({ type: 'enum', enum: ReactionType, nullable: true })
   type: ReactionType;
@@ -36,5 +36,6 @@ export class Reaction {
   user: User;
 
   @ManyToOne(() => Post, (post) => post.reactions, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'reactable_id' })
   post: Post;
 }

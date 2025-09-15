@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreatePostTagDto {
   @IsNotEmpty()
-  @IsNumber()
-  post_id: number;
+  @IsString()
+  post_id: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  tag_id: number;
+  @IsString()
+  tag_id: string;
 }

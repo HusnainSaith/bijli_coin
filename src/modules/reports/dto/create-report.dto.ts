@@ -1,17 +1,17 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateReportDto {
   @IsNotEmpty()
-  @IsNumber()
-  reporter_id: number;
+  @IsString()
+  reporter_id: string;
 
   @IsNotEmpty()
   @IsString()
   reportable_type: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  reportable_id: number;
+  @IsString()
+  reportable_id: string;
 
   @IsNotEmpty()
   @IsString()

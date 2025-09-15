@@ -1,19 +1,19 @@
-import { IsNotEmpty, IsNumber, IsString, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 export class CreateRecommendationDto {
   @IsNotEmpty()
-  @IsNumber()
-  user_id: number;
+  @IsString()
+  user_id: string;
 
   @IsNotEmpty()
   @IsString()
   recommendable_type: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  recommendable_id: number;
+  @IsString()
+  recommendable_id: string;
 
   @IsOptional()
-  @IsNumber()
-  score?: number;
+  @IsString()
+  score?: string;
 }

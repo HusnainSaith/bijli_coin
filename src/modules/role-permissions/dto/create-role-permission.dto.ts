@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateRolePermissionDto {
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   role_id: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   permission_id: string;
 }

@@ -21,8 +21,8 @@ export class TagsService {
     return this.tagRepository.find();
   }
 
-  async findOne(id: number): Promise<Tag> {
-    if (!id || id <= 0) {
+  async findOne(id:string): Promise<Tag> {
+    if (!id) {
       throw new BadRequestException('Invalid tag ID');
     }
     const tag = await this.tagRepository.findOne({ where: { id } });
@@ -32,7 +32,7 @@ export class TagsService {
     return tag;
   }
 
-  async update(id: number, updateTagDto: UpdateTagDto): Promise<Tag> {
+  async update(id: string, updateTagDto: UpdateTagDto): Promise<Tag> {
     const result = await this.tagRepository.update(id, updateTagDto);
     if (result.affected === 0) {
       throw new NotFoundException('Tag not found');
@@ -40,15 +40,15 @@ export class TagsService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.tagRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Tag not found');
     }
   }
 
-  async getPosts(tagId: number) {
-    if (!tagId || tagId <= 0) {
+  async getPosts(tagId: string) {
+    if (!tagId) {
       throw new BadRequestException('Invalid tag ID');
     }
 

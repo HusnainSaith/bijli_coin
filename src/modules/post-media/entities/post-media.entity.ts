@@ -5,13 +5,13 @@ import { Media } from '../../media/entities/media.entity';
 @Entity('post_media')
 export class PostMedia {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  post_id: number;
+  post_id: string;
 
   @Column()
-  media_id: number;
+  media_id: string;
 
   @CreateDateColumn()
   created_at: Date;

@@ -1,9 +1,9 @@
-import { IsOptional, IsNumber, IsString, IsNotEmpty } from 'class-validator';
+import { IsOptional, IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateAuditLogDto {
   @IsOptional()
-  @IsNumber()
-  user_id?: number;
+  @IsString()
+  user_id?: string;
 
   @IsNotEmpty()
   @IsString()
@@ -14,8 +14,8 @@ export class CreateAuditLogDto {
   auditable_type?: string;
 
   @IsOptional()
-  @IsNumber()
-  auditable_id?: number;
+  @IsString()
+  auditable_id?: string;
 
   @IsOptional()
   @IsString()

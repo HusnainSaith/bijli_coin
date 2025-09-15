@@ -4,10 +4,10 @@ import { User } from '../../users/entities/user.entity';
 @Entity('media')
 export class Media {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column()
   filename: string;

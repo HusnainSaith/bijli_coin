@@ -4,16 +4,16 @@ import { User } from '../../users/entities/user.entity';
 @Entity('reports')
 export class Report {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  reporter_id: number;
+  reporter_id: string;
 
   @Column()
   reportable_type: string;
 
   @Column()
-  reportable_id: number;
+  reportable_id: string;
 
   @Column()
   reason: string;

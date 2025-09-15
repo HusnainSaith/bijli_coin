@@ -21,8 +21,8 @@ export class AnswersService {
     return this.answerRepository.find({ relations: ['user', 'question'] });
   }
 
-  async findOne(id: number): Promise<Answer> {
-    if (typeof id !== 'number' || isNaN(id) || id <= 0) {
+  async findOne(id: string): Promise<Answer> {
+    if (typeof id !== 'string'  ) {
       throw new BadRequestException('Invalid answer ID');
     }
     const answer = await this.answerRepository.findOne({
@@ -35,8 +35,8 @@ export class AnswersService {
     return answer;
   }
 
-  async update(id: number, updateAnswerDto: UpdateAnswerDto): Promise<Answer> {
-    if (typeof id !== 'number' || isNaN(id) || id <= 0) {
+  async update(id: string, updateAnswerDto: UpdateAnswerDto): Promise<Answer> {
+    if (typeof id !== 'string') {
       throw new BadRequestException('Invalid answer ID');
     }
     const result = await this.answerRepository.update(id, updateAnswerDto);
@@ -46,8 +46,8 @@ export class AnswersService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
-    if (typeof id !== 'number' || isNaN(id) || id <= 0) {
+  async remove(id: string): Promise<void> {
+    if (typeof id !== 'string'  ) {
       throw new BadRequestException('Invalid answer ID');
     }
     const result = await this.answerRepository.delete(id);
@@ -56,8 +56,8 @@ export class AnswersService {
     }
   }
 
-  async findByQuestion(questionId: number): Promise<Answer[]> {
-    if (!questionId || questionId <= 0) {
+  async findByQuestion(questionId: string): Promise<Answer[]> {
+    if (!questionId) {
       throw new BadRequestException('Invalid question ID');
     }
     return this.answerRepository.find({

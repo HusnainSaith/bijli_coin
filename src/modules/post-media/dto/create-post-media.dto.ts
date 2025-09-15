@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreatePostMediaDto {
   @IsNotEmpty()
-  @IsNumber()
-  post_id: number;
+  @IsString()
+  post_id: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  media_id: number;
+  @IsString()
+  media_id: string;
 }

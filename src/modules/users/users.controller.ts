@@ -1,15 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
+import { Audit } from '../../common/decorators/audit.decorator';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(AuditInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Audit({ action: 'CREATE_USER', resource: 'User' })
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       return await this.usersService.create(createUserDto);
@@ -29,11 +33,13 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @Audit({ action: 'UPDATE_USER', resource: 'User' })
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
+  @Audit({ action: 'DELETE_USER', resource: 'User' })
   async remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

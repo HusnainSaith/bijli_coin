@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, IsEnum, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
 
 export enum ReactionType {
   LIKE = 'like',
@@ -11,16 +11,16 @@ export enum ReactionType {
 
 export class CreateReactionDto {
   @IsNotEmpty()
-  @IsNumber()
-  user_id: number;
+  @IsString()
+  user_id: string;
 
   @IsNotEmpty()
   @IsString()
   reactable_type: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  reactable_id: number;
+  @IsString()
+  reactable_id: string;
 
   @IsOptional()
   @IsEnum(ReactionType)

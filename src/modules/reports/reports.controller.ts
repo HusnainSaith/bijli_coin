@@ -24,22 +24,22 @@ export class ReportsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id') id: string) {
     return this.reportsService.findOne(id);
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateReportDto: UpdateReportDto) {
+  async update(@Param('id') id: string, @Body() updateReportDto: UpdateReportDto) {
     return this.reportsService.update(id, updateReportDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id') id: string) {
     return this.reportsService.remove(id);
   }
 
   @Get('user/:userId')
-  async findByUser(@Param('userId', ParseIntPipe) userId: number) {
+  async findByUser(@Param('userId') userId: string) {
     return this.reportsService.findByUser(userId);
   }
 }

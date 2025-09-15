@@ -7,7 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Post } from '../posts/entities/post.entity';
 import { Draft } from '../drafts/entities/draft.entity';
 import { Bookmark } from '../bookmarks/entities/bookmark.entity';
-import { Follower } from '../followers/entities/follower.entity';
+
 import { CategoryFollower } from '../category-followers/entities/category-follower.entity';
 import { AuthorFollower } from '../author-followers/entities/author-follower.entity';
 import { Notification } from '../notifications/entities/notification.entity';
@@ -27,8 +27,7 @@ export class UsersService {
     @InjectRepository(Bookmark)
     private bookmarkRepository: Repository<Bookmark>,
 
-    @InjectRepository(Follower)
-    private followerRepository: Repository<Follower>,
+
 
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
@@ -136,23 +135,16 @@ async getFollowers(userId: string) {
     throw new BadRequestException('Invalid user ID');
   }
 
-  const followers = await this.followerRepository.find({
-    where: { following_id: userId, following_type: 'user' }, // ensure it's "user"
-    relations: ['follower'], // loads follower details
-    order: { created_at: 'DESC' }, // newest followers first
+  const followers = await this.authorFollowerRepository.find({
+    where: { author_id: userId },
+    relations: ['follower'],
+    order: { created_at: 'DESC' },
   });
-
-  if (!followers.length) {
-    throw new NotFoundException(`No followers found for user ID ${userId}`);
-  }
 
   return followers;
 }
-async getAllFollowing(userId: string) {
-  const postFollows = await this.followerRepository.find({
-    where: { follower_id: userId },
-  });
 
+async getAllFollowing(userId: string) {
   const categoryFollows = await this.categoryFollowerRepository.find({
     where: { user_id: userId },
     relations: ['category'],
@@ -163,23 +155,7 @@ async getAllFollowing(userId: string) {
     relations: ['author'],
   });
 
-  const posts = [];
-  for (const follow of postFollows) {
-    if (follow.following_type === 'posts') {
-      const post = await this.postRepository.findOne({ where: { id: follow.following_id } });
-      if (post) {
-        posts.push({
-          id: follow.id,
-          type: 'post',
-          followed: post,
-          createdAt: follow.created_at,
-        });
-      }
-    }
-  }
-
   return {
-    posts,
     categories: categoryFollows.map(f => ({
       id: f.id,
       type: 'category',

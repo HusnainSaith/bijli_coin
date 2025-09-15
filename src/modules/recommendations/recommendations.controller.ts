@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
 import { RecommendationsService } from './recommendations.service';
 import { CreateRecommendationDto } from './dto/create-recommendation.dto';
 import { UpdateRecommendationDto } from './dto/update-recommendation.dto';
@@ -19,17 +19,17 @@ export class RecommendationsController {
   }
 
   @Get('user/:userId')
-  async findByUser(@Param('userId', ParseIntPipe) userId: number) {
+  async findByUser(@Param('userId') userId: string) {
     return this.recommendationsService.findByUser(userId);
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateRecommendationDto: UpdateRecommendationDto) {
+  async update(@Param('id') id: string, @Body() updateRecommendationDto: UpdateRecommendationDto) {
     return this.recommendationsService.update(id, updateRecommendationDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id') id: string) {
     return this.recommendationsService.remove(id);
   }
 }

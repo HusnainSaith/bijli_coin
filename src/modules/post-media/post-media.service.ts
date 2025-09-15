@@ -16,8 +16,8 @@ export class PostMediaService {
     return this.postMediaRepository.save(postMedia);
   }
 
-  async findByPost(postId: number): Promise<PostMedia[]> {
-    if (!postId || postId <= 0) {
+  async findByPost(postId: string): Promise<PostMedia[]> {
+    if (!postId) {
       throw new BadRequestException('Invalid post ID');
     }
     return this.postMediaRepository.find({
@@ -26,7 +26,7 @@ export class PostMediaService {
     });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.postMediaRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Post media relationship not found');

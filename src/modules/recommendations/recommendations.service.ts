@@ -17,8 +17,8 @@ export class RecommendationsService {
     return this.recommendationRepository.save(recommendation);
   }
 
-  async findByUser(userId: number): Promise<Recommendation[]> {
-    if (!userId || userId <= 0) {
+  async findByUser(userId: string): Promise<Recommendation[]> {
+    if (!userId ) {
       throw new BadRequestException('Invalid user ID');
     }
     return this.recommendationRepository.find({
@@ -27,7 +27,7 @@ export class RecommendationsService {
     });
   }
 
-  async update(id: number, updateRecommendationDto: UpdateRecommendationDto): Promise<Recommendation> {
+  async update(id: string, updateRecommendationDto: UpdateRecommendationDto): Promise<Recommendation> {
     const result = await this.recommendationRepository.update(id, updateRecommendationDto);
     if (result.affected === 0) {
       throw new NotFoundException('Recommendation not found');
@@ -39,7 +39,7 @@ export class RecommendationsService {
     return recommendation;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.recommendationRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Recommendation not found');

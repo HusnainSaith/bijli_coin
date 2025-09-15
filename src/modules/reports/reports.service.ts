@@ -21,23 +21,26 @@ export class ReportsService {
     return this.reportRepository.find({ relations: ['user'] });
   }
 
-  async findOne(id: number): Promise<Report> {
-    const safeId = Number(id);
-    if (!Number.isInteger(safeId) || safeId <= 0) {
-      throw new NotFoundException('Invalid report id');
-    }
-    const report = await this.reportRepository.findOne({
-      where: { id: safeId },
-      relations: ['user']
-    });
-    if (!report) {
-      throw new NotFoundException('Report not found');
-    }
-    return report;
+async findOne(id: string): Promise<Report> {
+  // Check if the id is a valid string before querying
+  if (typeof id !== 'string' || id.trim() === '') {
+    throw new NotFoundException('Invalid report ID provided.');
   }
 
-  async update(id: number, updateReportDto: UpdateReportDto): Promise<Report> {
-    if (typeof id !== 'number' || isNaN(id) || !Number.isInteger(id) || id <= 0) {
+  const report = await this.reportRepository.findOne({
+    where: { id },
+    relations: ['user'],
+  });
+
+  if (!report) {
+    throw new NotFoundException(`Report with ID "${id}" not found.`);
+  }
+
+  return report;
+}
+
+  async update(id: string, updateReportDto: UpdateReportDto): Promise<Report> {
+    if (typeof id !== "string") {
       throw new NotFoundException('Invalid report id');
     }
     const result = await this.reportRepository.update(id, updateReportDto);
@@ -47,14 +50,14 @@ export class ReportsService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.reportRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Report not found');
     }
   }
 
-  async findByUser(userId: number): Promise<Report[]> {
+  async findByUser(userId: string): Promise<Report[]> {
     return this.reportRepository.find({
       where: { reporter_id: userId },
       relations: ['reporter']

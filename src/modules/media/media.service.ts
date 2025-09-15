@@ -21,8 +21,8 @@ export class MediaService {
     return this.mediaRepository.find({ relations: ['user'] });
   }
 
-  async findOne(id: number): Promise<Media> {
-    if (!id || id <= 0) {
+  async findOne(id: string): Promise<Media> {
+    if (!id) {
       throw new BadRequestException('Invalid media ID');
     }
     const media = await this.mediaRepository.findOne({
@@ -35,7 +35,7 @@ export class MediaService {
     return media;
   }
 
-  async update(id: number, updateMediaDto: UpdateMediaDto): Promise<Media> {
+  async update(id: string, updateMediaDto: UpdateMediaDto): Promise<Media> {
     const result = await this.mediaRepository.update(id, updateMediaDto);
     if (result.affected === 0) {
       throw new NotFoundException('Media not found');
@@ -43,15 +43,15 @@ export class MediaService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.mediaRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Media not found');
     }
   }
 
-  async findByUser(userId: number): Promise<Media[]> {
-    if (!userId || userId <= 0) {
+  async findByUser(userId: string): Promise<Media[]> {
+    if (!userId) {
       throw new BadRequestException('Invalid user ID');
     }
     return this.mediaRepository.find({

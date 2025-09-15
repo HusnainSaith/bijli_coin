@@ -1,14 +1,18 @@
-import { Controller, Get, Post, Body, Delete, Param, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, UseGuards, HttpException, HttpStatus, UseInterceptors } from '@nestjs/common';
 import { AuthorFollowersService } from './author-followers.service';
 import { CreateAuthorFollowerDto } from './dto/create-author-follower.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
+import { Audit } from '../../common/decorators/audit.decorator';
 
 @Controller('author-followers')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(AuditInterceptor)
 export class AuthorFollowersController {
   constructor(private readonly authorFollowersService: AuthorFollowersService) {}
 
   @Post()
+  @Audit({ action: 'FOLLOW_AUTHOR', resource: 'AuthorFollower' })
   async create(@Body() createAuthorFollowerDto: CreateAuthorFollowerDto) {
     try {
       return await this.authorFollowersService.create(createAuthorFollowerDto);
@@ -28,6 +32,7 @@ export class AuthorFollowersController {
   }
 
   @Delete(':id')
+  @Audit({ action: 'UNFOLLOW_AUTHOR', resource: 'AuthorFollower' })
   async remove(@Param('id') id: string) {
     if (!id || id.trim() === '') {
       throw new HttpException('Invalid id parameter', HttpStatus.BAD_REQUEST);

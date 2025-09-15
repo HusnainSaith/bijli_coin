@@ -11,10 +11,10 @@ export enum QuestionStatus {
 @Entity('questions')
 export class Question {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column()
   title: string;
@@ -26,16 +26,16 @@ export class Question {
   content: string;
 
   @Column()
-  category_id: number;
+  category_id: string;
 
   @Column({ type: 'enum', enum: QuestionStatus, nullable: true })
   status: QuestionStatus;
 
   @Column({ default: 0 })
-  views_count: number;
+  views_count: string;
 
   @Column({ default: 0 })
-  answers_count: number;
+  answers_count: string;
 
   @CreateDateColumn()
   created_at: Date;

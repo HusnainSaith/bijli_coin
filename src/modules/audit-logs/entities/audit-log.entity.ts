@@ -4,10 +4,10 @@ import { User } from '../../users/entities/user.entity';
 @Entity('audit_logs')
 export class AuditLog {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column({ nullable: true })
-  user_id: number;
+  user_id: string;
 
   @Column()
   action: string;
@@ -16,7 +16,7 @@ export class AuditLog {
   auditable_type: string;
 
   @Column({ nullable: true })
-  auditable_id: number;
+  auditable_id: string;
 
   @Column({ nullable: true })
   ip_address: string;

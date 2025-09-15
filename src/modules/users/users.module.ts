@@ -21,11 +21,12 @@ import { User } from './entities/user.entity';
 import { Post } from '../posts/entities/post.entity';
 import { Draft } from '../drafts/entities/draft.entity';
 import { Bookmark } from '../bookmarks/entities/bookmark.entity';
-import { Follower } from '../followers/entities/follower.entity';
+
 import { CategoryFollower } from '../category-followers/entities/category-follower.entity';
 import { AuthorFollower } from '../author-followers/entities/author-follower.entity';
 import { Notification } from '../notifications/entities/notification.entity';
 import { Category } from '../categories/entities/category.entity';
+import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -34,12 +35,13 @@ import { Category } from '../categories/entities/category.entity';
       Post,
       Draft,
       Bookmark,
-      Follower,
+
       CategoryFollower,
       AuthorFollower,
       Notification,
       Category
     ]),
+    AuditLogsModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

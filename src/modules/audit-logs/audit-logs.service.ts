@@ -23,8 +23,8 @@ export class AuditLogsService {
     });
   }
 
-  async findByUser(userId: number): Promise<AuditLog[]> {
-    if (!userId || userId <= 0) {
+  async findByUser(userId: string): Promise<AuditLog[]> {
+    if (!userId) {
       throw new BadRequestException('Invalid user ID');
     }
     return this.auditLogRepository.find({

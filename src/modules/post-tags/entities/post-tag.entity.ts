@@ -4,14 +4,14 @@ import { Tag } from '../../tags/entities/tag.entity';
 
 @Entity('post_tags')
 export class PostTag {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
-  post_id: number;
+  post_id: string;
 
   @Column()
-  tag_id: number;
+  tag_id: string;
 
   @CreateDateColumn()
   created_at: Date;

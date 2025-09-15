@@ -9,7 +9,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { UsersModule } from '../users/users.module';
-import { RolesModule } from '../roles/roles.module';  
+import { RolesModule } from '../roles/roles.module';
+import { AuditLogsModule } from '../audit-logs/audit-logs.module';  
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RolesModule } from '../roles/roles.module';
     RolesModule, 
     PassportModule,
     TypeOrmModule.forFeature([RefreshToken]),
+    AuditLogsModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
