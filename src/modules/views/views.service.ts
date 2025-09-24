@@ -16,8 +16,8 @@ export class ViewsService {
     return this.viewRepository.save(view);
   }
 
-  async findByUser(userId: number): Promise<View[]> {
-    if (!userId || userId <= 0) {
+  async findByUser(userId: string): Promise<View[]> {
+    if (!userId) {
       throw new BadRequestException('Invalid user ID');
     }
     return this.viewRepository.find({
@@ -26,8 +26,8 @@ export class ViewsService {
     });
   }
 
-  async findByPost(postId: number): Promise<View[]> {
-    if (!postId || postId <= 0) {
+  async findByPost(postId: string): Promise<View[]> {
+    if (!postId) {
       throw new BadRequestException('Invalid post ID');
     }
     return this.viewRepository.find({

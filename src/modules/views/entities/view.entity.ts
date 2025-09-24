@@ -4,16 +4,16 @@ import { User } from '../../users/entities/user.entity';
 @Entity('views')
 export class View {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column({ nullable: true })
-  user_id: number;
+  user_id: string;
 
   @Column()
   viewable_type: string;
 
   @Column()
-  viewable_id: number;
+  viewable_id: string;
 
   @Column()
   ip_address: string;

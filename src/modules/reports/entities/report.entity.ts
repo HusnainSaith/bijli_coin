@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { reason_enum, ReportStatus_enum } from '../dto/create-report.dto';
 
 @Entity('reports')
 export class Report {
@@ -16,13 +17,13 @@ export class Report {
   reportable_id: string;
 
   @Column()
-  reason: string;
+  reason: reason_enum;
 
   @Column('text')
   description: string;
 
   @Column()
-  status: string;
+  status: ReportStatus_enum;
 
   @CreateDateColumn()
   created_at: Date;
@@ -30,7 +31,10 @@ export class Report {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'reporter_id' })
-  reporter: User;
+// report.entity.ts
+@ManyToOne(() => User, (user) => user.reports, { eager: false })
+  @JoinColumn({ name: 'reporter_id' })  // links column reporter_id
+  user: User;
+
+
 }

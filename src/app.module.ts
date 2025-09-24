@@ -26,7 +26,7 @@ import { PermissionsModule } from './modules/permissions/permissions.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { ViewsModule } from './modules/views/views.module';
 // import { TrackingModule } from './modules/tracking/tracking.module';
-import { RecommendationsModule } from './modules/recommendations/recommendations.module';
+// import { RecommendationsModule } from './modules/recommendations/recommendations.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { AuthorFollowersModule } from './modules/author-followers/author-followers.module';
 import { CategoryFollowersModule } from './modules/category-followers/category-followers.module';
@@ -73,7 +73,7 @@ import { RolePermissionsModule } from './modules/role-permissions/role-permissio
     ReportsModule,
     ViewsModule,
     // TrackingModule,
-    RecommendationsModule,
+    // RecommendationsModule,
     AuditLogsModule,
     AuthorFollowersModule,
     CategoryFollowersModule,

@@ -1,17 +1,18 @@
-import { IsOptional, IsNumber, IsString, IsNotEmpty } from 'class-validator';
+
+import { IsOptional ,IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateViewDto {
   @IsOptional()
-  @IsNumber()
-  user_id?: number;
+  @IsString()
+  user_id?: string;
 
   @IsNotEmpty()
   @IsString()
   viewable_type: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  viewable_id: number;
+  @IsString()
+  viewable_id: string;
 
   @IsNotEmpty()
   @IsString()

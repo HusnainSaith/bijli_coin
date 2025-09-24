@@ -3,10 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReactionsService } from './reactions.service';
 import { ReactionsController } from './reactions.controller';
 import { Reaction } from './entities/reaction.entity';
+import { Post } from '../posts/entities/post.entity';
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reaction]), AuditLogsModule],
+  imports: [TypeOrmModule.forFeature([Reaction, Post]), AuditLogsModule],
   controllers: [ReactionsController],
   providers: [ReactionsService],
 })
