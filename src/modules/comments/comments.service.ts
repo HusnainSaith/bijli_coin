@@ -5,6 +5,7 @@ import { Comment } from './entities/comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentReply } from '../comment-replies/entities/comment-reply.entity';
+import { Post } from '../posts/entities/post.entity';
 
 @Injectable()
 export class CommentsService {
@@ -13,12 +14,23 @@ export class CommentsService {
     private commentRepository: Repository<Comment>,
 
     @InjectRepository(CommentReply)
-      private commentReplyRepository: Repository<CommentReply>,
+    private commentReplyRepository: Repository<CommentReply>,
+    
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
   ) {}
 
   async create(createCommentDto: CreateCommentDto): Promise<Comment> {
     const comment = this.commentRepository.create(createCommentDto);
-    return this.commentRepository.save(comment);
+    const savedComment = await this.commentRepository.save(comment);
+    
+    await this.postRepository.increment(
+      { id: createCommentDto.post_id }, 
+      'comments_count', 
+      1
+    );
+    
+    return savedComment;
   }
 
   async findAll(): Promise<Comment[]> {
@@ -48,10 +60,21 @@ export class CommentsService {
   }
 
   async remove(id: string): Promise<void> {
+    const comment = await this.commentRepository.findOne({ where: { id } });
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+    
     const result = await this.commentRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Comment not found');
     }
+    
+    await this.postRepository.decrement(
+      { id: comment.post_id }, 
+      'comments_count', 
+      1
+    );
   }
 
 async getReplies(commentId: string) {

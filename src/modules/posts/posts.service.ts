@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { ViewsService } from '../views/views.service';
 import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -71,6 +72,26 @@ async create(createPostDto: CreatePostDto): Promise<Post> {
     }
 
     return post;
+  }
+
+  async incrementViews(id: string): Promise<void> {
+    await this.postRepository.increment({ id }, 'views_count', 1);
+  }
+
+  async incrementLikes(id: string): Promise<void> {
+    await this.postRepository.increment({ id }, 'likes_count', 1);
+  }
+
+  async decrementLikes(id: string): Promise<void> {
+    await this.postRepository.decrement({ id }, 'likes_count', 1);
+  }
+
+  async incrementComments(id: string): Promise<void> {
+    await this.postRepository.increment({ id }, 'comments_count', 1);
+  }
+
+  async decrementComments(id: string): Promise<void> {
+    await this.postRepository.decrement({ id }, 'comments_count', 1);
   }
 
   async update(id: string, updatePostDto: UpdatePostDto): Promise<Post> {

@@ -8,5 +8,6 @@ import { View } from './entities/view.entity';
   imports: [TypeOrmModule.forFeature([View])],
   controllers: [ViewsController],
   providers: [ViewsService],
+  exports: [ViewsService],
 })
 export class ViewsModule {}

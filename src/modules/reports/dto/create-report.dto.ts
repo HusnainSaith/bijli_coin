@@ -1,5 +1,20 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import e from 'express';
 
+export enum ReportStatus_enum {
+  PENDING = 'pending',
+  REVIEWED = 'reviewed',
+  RESOLVED = 'resolved',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
+export enum reason_enum {
+  SPAM = 'spam',
+  INAPPROPRIATE_CONTENT = 'inappropriate_content',
+  HARASSMENT = 'harassment',
+  OTHER = 'other',
+}
 export class CreateReportDto {
   @IsNotEmpty()
   @IsString()
@@ -14,14 +29,14 @@ export class CreateReportDto {
   reportable_id: string;
 
   @IsNotEmpty()
-  @IsString()
-  reason: string;
+  @IsEnum(reason_enum)
+  reason: (reason_enum)
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  description: string;
+  description?: string;
 
-  @IsNotEmpty()
-  @IsString()
-  status: string;
+  @IsOptional()
+  @IsEnum(ReportStatus_enum)
+  status?: ReportStatus_enum = ReportStatus_enum.PENDING;
 }

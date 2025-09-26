@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Report } from './entities/report.entity';
@@ -9,58 +13,87 @@ import { UpdateReportDto } from './dto/update-report.dto';
 export class ReportsService {
   constructor(
     @InjectRepository(Report)
-    private reportRepository: Repository<Report>,
+    private readonly reportRepository: Repository<Report>,
   ) {}
 
+  // ✅ CREATE
   async create(createReportDto: CreateReportDto): Promise<Report> {
+    if (!createReportDto.reporter_id || !createReportDto.reportable_id) {
+      throw new BadRequestException('Missing required fields');
+    }
+
     const report = this.reportRepository.create(createReportDto);
-    return this.reportRepository.save(report);
+    return await this.reportRepository.save(report);
   }
 
+  // ✅ FIND ALL
   async findAll(): Promise<Report[]> {
-    return this.reportRepository.find({ relations: ['user'] });
+    return await this.reportRepository.find({ relations: ['user'] });
   }
 
-async findOne(id: string): Promise<Report> {
-  // Check if the id is a valid string before querying
-  if (typeof id !== 'string' || id.trim() === '') {
-    throw new NotFoundException('Invalid report ID provided.');
+  // ✅ FIND ONE
+  async findOne(id: string): Promise<Report> {
+    if (!id || typeof id !== 'string' || id.trim() === '') {
+      throw new BadRequestException('Invalid report ID provided');
+    }
+
+    const report = await this.reportRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!report) {
+      throw new NotFoundException(`Report with ID "${id}" not found`);
+    }
+
+    return report;
   }
 
-  const report = await this.reportRepository.findOne({
-    where: { id },
-    relations: ['user'],
-  });
-
-  if (!report) {
-    throw new NotFoundException(`Report with ID "${id}" not found.`);
-  }
-
-  return report;
-}
-
+  // ✅ UPDATE
   async update(id: string, updateReportDto: UpdateReportDto): Promise<Report> {
-    if (typeof id !== "string") {
-      throw new NotFoundException('Invalid report id');
+    if (!id || typeof id !== 'string' || id.trim() === '') {
+      throw new BadRequestException('Invalid report ID provided');
     }
+
     const result = await this.reportRepository.update(id, updateReportDto);
+
     if (result.affected === 0) {
-      throw new NotFoundException('Report not found');
+      throw new NotFoundException(`Report with ID "${id}" not found`);
     }
+
     return this.findOne(id);
   }
 
+  // ✅ REMOVE
   async remove(id: string): Promise<void> {
+    if (!id || typeof id !== 'string' || id.trim() === '') {
+      throw new BadRequestException('Invalid report ID provided');
+    }
+
     const result = await this.reportRepository.delete(id);
+
     if (result.affected === 0) {
-      throw new NotFoundException('Report not found');
+      throw new NotFoundException(`Report with ID "${id}" not found`);
     }
   }
 
+  // ✅ FIND BY USER
   async findByUser(userId: string): Promise<Report[]> {
-    return this.reportRepository.find({
-      where: { reporter_id: userId },
-      relations: ['reporter']
-    });
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+      throw new BadRequestException('Invalid user ID provided');
+    }
+
+    const reports = await this.reportRepository.find({
+  where: { user: { id: userId } }, // relation field
+  relations: ['user'],
+});
+
+    if (!reports || reports.length === 0) {
+      throw new NotFoundException(
+        `No reports found for user with ID "${userId}"`,
+      );
+    }
+
+    return reports;
   }
 }
