@@ -3,11 +3,11 @@ import { User } from './user.entity';
 
 @Entity('user_profiles')
 export class UserProfile {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column({ nullable: true })
   first_name: string;

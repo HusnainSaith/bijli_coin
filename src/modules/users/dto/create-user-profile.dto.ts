@@ -1,8 +1,8 @@
 import { IsOptional, IsString, IsNumber } from 'class-validator';
 
 export class CreateUserProfileDto {
-  @IsNumber()
-  user_id: number;
+  @IsString()
+  user_id: string;
 
   @IsOptional()
   @IsString()
