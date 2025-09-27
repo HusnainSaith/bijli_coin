@@ -22,6 +22,9 @@ export class UserProfile {
   avatar: string;
 
   @Column({ nullable: true })
+  profile_picture: string;
+
+  @Column({ nullable: true })
   phone: string;
 
   @Column({ nullable: true })

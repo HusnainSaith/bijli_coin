@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength, IsUUID, IsOptional, IsEnum } from 'class-validator';
 import { Role } from '../../../common/enums/role.enum';
 import { UserStatus } from 'src/modules/users/entities/user.entity';
+import { Transform } from 'class-transformer';
 
 export class RegisterDto {
   @IsNotEmpty()
@@ -16,15 +17,19 @@ export class RegisterDto {
   @MinLength(8)
   password: string;
 
-  @IsEnum(Role)
+
   @IsOptional()
-  role?: Role;
+  @IsEnum(Role)
+  @Transform(({ value }) => value || 'user')
+  role?: string = 'user';
 
   @IsUUID()
   @IsOptional()
   role_id?: string;
 
-  @IsEnum(UserStatus)
   @IsOptional()
-  status?: UserStatus;
+  @IsEnum(UserStatus)
+  @Transform(({ value }) => value || UserStatus.ACTIVE)
+  status?: UserStatus = UserStatus.ACTIVE;
+
 }

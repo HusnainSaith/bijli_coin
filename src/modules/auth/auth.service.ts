@@ -47,12 +47,9 @@ export class AuthService {
     username: dto.username,
     email: dto.email,
     password: hashedPassword,
-    role: dto.role ?? Role.USER,  // take role from DTO if provided
-    status: dto.status ?? undefined,
+    role: dto.role || 'user',
+    status: dto.status,
   };
-  if (dto.role_id) {
-    userPayload.role_id = dto.role_id;
-  }
 
   const user = await this.usersService.create(userPayload);
 
@@ -66,16 +63,14 @@ export class AuthService {
 
 
   async login(dto: LoginDto) {
-    console.log('Login attempt for email:', dto.email);
     const user = await this.usersService.findByEmailWithPassword(dto.email);
-    console.log('User found:', user ? 'Yes' : 'No');
+
     
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
     
     const passwordMatch = await bcrypt.compare(dto.password, user.password);
-    console.log('Password match:', passwordMatch);
     
     if (!passwordMatch) {
       throw new UnauthorizedException('Invalid password');

@@ -274,10 +274,18 @@ async function seed() {
       
     console.log('New permissions added successfully.');
 
-    // Create Super Admin role
+    // Create roles
     let superAdminRole = await roleRepo.findOne({ where: { slug: 'super_admin' } });
     if (!superAdminRole) {
       superAdminRole = await roleRepo.save({ name: 'Super Admin', slug: 'super_admin' });
+    }
+
+    let userRole = await roleRepo.findOne({ where: { slug: 'user' } });
+    if (!userRole) {
+      userRole = await roleRepo.save({ name: 'user', slug: 'user' });
+      console.log('User role created');
+    } else {
+      console.log('User role already exists');
     }
 
     // Assign ALL permissions to Super Admin

@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, IsEnum, IsOptional, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { Role } from '../../../common/enums/role.enum';
 
 export enum UserStatus {
@@ -22,16 +23,16 @@ export class CreateUserDto {
 
 
   @IsOptional()
-  @IsString()
-  role?: string;
+  @IsEnum(Role)
+  @Transform(({ value }) => value || 'user')
+  role?: string = 'user';
 
- 
-  
   @IsUUID()
   @IsOptional()
-  role_id: string;
+  role_id?: string;
 
   @IsOptional()
   @IsEnum(UserStatus)
-  status?: UserStatus;
+  @Transform(({ value }) => value || UserStatus.ACTIVE)
+  status?: UserStatus = UserStatus.ACTIVE;
 }

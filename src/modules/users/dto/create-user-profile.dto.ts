@@ -1,8 +1,9 @@
 import { IsOptional, IsString, IsNumber } from 'class-validator';
 
 export class CreateUserProfileDto {
+  @IsOptional()
   @IsString()
-  user_id: string;
+  user_id?: string;
 
   @IsOptional()
   @IsString()
@@ -19,6 +20,10 @@ export class CreateUserProfileDto {
   @IsOptional()
   @IsString()
   avatar?: string;
+
+  @IsOptional()
+  @IsString()
+  profile_picture?: string; 
 
   @IsOptional()
   @IsString()

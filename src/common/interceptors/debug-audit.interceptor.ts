@@ -23,14 +23,7 @@ export class DebugAuditInterceptor implements NestInterceptor {
     const user = request.user;
     const ip = request.ip || request.connection.remoteAddress;
     
-    console.log('=== DEBUG AUDIT INTERCEPTOR ===');
-    console.log('Route:', request.route?.path || request.url);
-    console.log('Method:', request.method);
-    console.log('Headers Authorization:', request.headers.authorization ? 'Present' : 'Missing');
-    console.log('Request User Object:', JSON.stringify(user, null, 2));
-    console.log('User ID from user.id:', user?.id);
-    console.log('User ID from user.sub:', user?.sub);
-    console.log('================================');
+
 
     return next.handle().pipe(
       tap(async (result) => {
