@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  HttpException,
+  HttpStatus,
+  UseInterceptors,
+} from '@nestjs/common';
 import { DraftsService } from './drafts.service';
 import { CreateDraftDto } from './dto/create-draft.dto';
 import { UpdateDraftDto } from './dto/update-draft.dto';
@@ -34,7 +46,10 @@ export class DraftsController {
 
   @Patch(':id')
   @Audit({ action: 'UPDATE_DRAFT', resource: 'Draft' })
-  async update(@Param('id') id: string, @Body() updateDraftDto: UpdateDraftDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateDraftDto: UpdateDraftDto,
+  ) {
     return this.draftsService.update(id, updateDraftDto);
   }
 

@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Delete, Param, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Param,
+  UseGuards,
+  HttpException,
+  HttpStatus,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { PostMediaService } from './post-media.service';
 import { CreatePostMediaDto } from './dto/create-post-media.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';

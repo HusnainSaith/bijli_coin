@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Draft } from './entities/draft.entity';
@@ -22,12 +26,12 @@ export class DraftsService {
   }
 
   async findOne(id: string): Promise<Draft> {
-    if (!id ) {
+    if (!id) {
       throw new BadRequestException('Invalid draft ID');
     }
     const draft = await this.draftRepository.findOne({
       where: { id },
-      relations: ['user']
+      relations: ['user'],
     });
     if (!draft) {
       throw new NotFoundException('Draft not found');
@@ -51,12 +55,12 @@ export class DraftsService {
   }
 
   async findByUser(userId: string): Promise<Draft[]> {
-    if (!userId ) {
+    if (!userId) {
       throw new BadRequestException('Invalid user ID');
     }
     return this.draftRepository.find({
       where: { user_id: userId },
-      relations: ['user']
+      relations: ['user'],
     });
   }
 }

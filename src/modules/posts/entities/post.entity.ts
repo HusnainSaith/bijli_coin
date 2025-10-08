@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { PostMedia } from 'src/modules/post-media/entities/post-media.entity';
@@ -38,13 +47,13 @@ export class Post {
   @Column({ nullable: true })
   featured_image?: string;
 
-  @Column({default:0})
+  @Column({ default: 0 })
   views_count: number;
 
-  @Column({default:0})
+  @Column({ default: 0 })
   likes_count: number;
 
-  @Column({default:0})
+  @Column({ default: 0 })
   comments_count: number;
 
   @Column({ nullable: true })
@@ -76,8 +85,6 @@ export class Post {
   @OneToMany(() => Reaction, (reaction) => reaction.post, { cascade: true })
   reactions: Reaction[];
 
-  @OneToMany(() => Post, post => post.user)
-posts: Post[];
-
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
 }
-

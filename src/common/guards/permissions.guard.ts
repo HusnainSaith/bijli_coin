@@ -29,18 +29,20 @@ export class PermissionsGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
     console.log('Auth header:', authHeader); // Debug log
-    
+
     const user = request.user; // ✅ comes from JwtStrategy payload
 
     console.log('User object:', user); // Debug log
     console.log('User role_id:', user?.role_id); // Debug log
-    
+
     if (!user) {
       throw new ForbiddenException('User not found');
     }
-    
+
     if (!user.role_id) {
-      throw new ForbiddenException(`User role_id not found. User object: ${JSON.stringify(user)}`);
+      throw new ForbiddenException(
+        `User role_id not found. User object: ${JSON.stringify(user)}`,
+      );
     }
 
     // ✅ Get permissions for role

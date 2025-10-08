@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PostTag } from './entities/post-tag.entity';
@@ -17,12 +21,12 @@ export class PostTagsService {
   }
 
   async findByPost(postId: string): Promise<PostTag[]> {
-    if (!postId ) {
+    if (!postId) {
       throw new BadRequestException('Invalid post ID');
     }
     return this.postTagRepository.find({
       where: { post_id: postId },
-      relations: ['tag']
+      relations: ['tag'],
     });
   }
 

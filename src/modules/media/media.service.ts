@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Media } from './entities/media.entity';
@@ -27,7 +31,7 @@ export class MediaService {
     }
     const media = await this.mediaRepository.findOne({
       where: { id },
-      relations: ['user']
+      relations: ['user'],
     });
     if (!media) {
       throw new NotFoundException('Media not found');
@@ -56,7 +60,7 @@ export class MediaService {
     }
     return this.mediaRepository.find({
       where: { user_id: userId },
-      relations: ['user']
+      relations: ['user'],
     });
   }
 }

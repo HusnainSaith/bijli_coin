@@ -19,7 +19,7 @@ export class AuditLogsService {
   async findAll(): Promise<AuditLog[]> {
     return this.auditLogRepository.find({
       relations: ['user'],
-      order: { created_at: 'DESC' }
+      order: { created_at: 'DESC' },
     });
   }
 
@@ -30,7 +30,7 @@ export class AuditLogsService {
     return this.auditLogRepository.find({
       where: { user_id: userId },
       relations: ['user'],
-      order: { created_at: 'DESC' }
+      order: { created_at: 'DESC' },
     });
   }
 }

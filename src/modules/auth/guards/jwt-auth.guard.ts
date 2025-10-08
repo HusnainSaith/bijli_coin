@@ -6,12 +6,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   canActivate(context: any) {
     const request = context.switchToHttp().getRequest();
     const path = request.route?.path || request.url.split('?')[0];
-    
+
     // Skip JWT auth for auth routes
     if (path.startsWith('/auth')) {
       return true;
     }
-    
+
     return super.canActivate(context);
   }
 

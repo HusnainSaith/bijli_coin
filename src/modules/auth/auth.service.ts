@@ -1,4 +1,10 @@
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -26,52 +32,50 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-  const existingUser = await this.usersService.findByEmail(dto.email);
-  if (existingUser) {
-    throw new ConflictException('Email already exists');
-  }
-
-  // Allow any role value, don't restrict to enum
-
-  // ✅ check if role_id exists in DB (assuming you have a Role entity/table)
-  if (dto.role_id) {
-    const roleExists = await this.rolesService.findById(dto.role_id);
-    if (!roleExists) {
-      throw new BadRequestException(`Invalid role_id: ${dto.role_id}`);
+    const existingUser = await this.usersService.findByEmail(dto.email);
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
     }
+
+    // Allow any role value, don't restrict to enum
+
+    // ✅ check if role_id exists in DB (assuming you have a Role entity/table)
+    if (dto.role_id) {
+      const roleExists = await this.rolesService.findById(dto.role_id);
+      if (!roleExists) {
+        throw new BadRequestException(`Invalid role_id: ${dto.role_id}`);
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+    const userPayload: any = {
+      username: dto.username,
+      email: dto.email,
+      password: hashedPassword,
+      role: dto.role || 'user',
+      status: dto.status,
+    };
+
+    const user = await this.usersService.create(userPayload);
+
+    const { password, ...result } = user;
+    return {
+      success: true,
+      message: 'User registered successfully',
+      user: result,
+    };
   }
-
-  const hashedPassword = await bcrypt.hash(dto.password, 10);
-
-  const userPayload: any = {
-    username: dto.username,
-    email: dto.email,
-    password: hashedPassword,
-    role: dto.role || 'user',
-    status: dto.status,
-  };
-
-  const user = await this.usersService.create(userPayload);
-
-  const { password, ...result } = user;
-  return {
-    success: true,
-    message: 'User registered successfully',
-    user: result,
-  };
-}
-
 
   async login(dto: LoginDto) {
     const user = await this.usersService.findByEmailWithPassword(dto.email);
 
-    
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
-    
+
     const passwordMatch = await bcrypt.compare(dto.password, user.password);
-    
+
     if (!passwordMatch) {
       throw new UnauthorizedException('Invalid password');
     }
@@ -95,7 +99,10 @@ export class AuthService {
 
   async refreshToken(dto: RefreshTokenDto) {
     // Validate refreshToken to prevent NoSQL injection
-    if (typeof dto.refreshToken !== 'string' || !/^[A-Za-z0-9\-\._~\+\/]+=*$/.test(dto.refreshToken)) {
+    if (
+      typeof dto.refreshToken !== 'string' ||
+      !/^[A-Za-z0-9\-\._~\+\/]+=*$/.test(dto.refreshToken)
+    ) {
       throw new UnauthorizedException('Invalid refresh token format');
     }
     const refreshToken = await this.refreshTokenRepository.findOne({
@@ -107,7 +114,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    const payload = { sub: refreshToken.user.id, email: refreshToken.user.email };
+    const payload = {
+      sub: refreshToken.user.id,
+      email: refreshToken.user.email,
+    };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     return {

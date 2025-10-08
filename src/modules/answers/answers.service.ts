@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Answer } from './entities/answer.entity';
@@ -22,12 +26,12 @@ export class AnswersService {
   }
 
   async findOne(id: string): Promise<Answer> {
-    if (typeof id !== 'string'  ) {
+    if (typeof id !== 'string') {
       throw new BadRequestException('Invalid answer ID');
     }
     const answer = await this.answerRepository.findOne({
       where: { id },
-      relations: ['user', 'question']
+      relations: ['user', 'question'],
     });
     if (!answer) {
       throw new NotFoundException('Answer not found');
@@ -47,7 +51,7 @@ export class AnswersService {
   }
 
   async remove(id: string): Promise<void> {
-    if (typeof id !== 'string'  ) {
+    if (typeof id !== 'string') {
       throw new BadRequestException('Invalid answer ID');
     }
     const result = await this.answerRepository.delete(id);
@@ -62,7 +66,7 @@ export class AnswersService {
     }
     return this.answerRepository.find({
       where: { question_id: questionId },
-      relations: ['user']
+      relations: ['user'],
     });
   }
 }

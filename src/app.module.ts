@@ -36,8 +36,6 @@ import { PostTagsModule } from './modules/post-tags/post-tags.module';
 import { RolePermissionsModule } from './modules/role-permissions/role-permissions.module';
 // import { FollowersModule } from './modules/followers/followers.module';
 
-
-
 @Module({
   imports: [
     ConfigModule.forRoot({

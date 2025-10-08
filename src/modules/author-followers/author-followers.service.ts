@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthorFollower } from './entities/author-follower.entity';
@@ -11,8 +15,12 @@ export class AuthorFollowersService {
     private authorFollowerRepository: Repository<AuthorFollower>,
   ) {}
 
-  async create(createAuthorFollowerDto: CreateAuthorFollowerDto): Promise<AuthorFollower> {
-    const authorFollower = this.authorFollowerRepository.create(createAuthorFollowerDto);
+  async create(
+    createAuthorFollowerDto: CreateAuthorFollowerDto,
+  ): Promise<AuthorFollower> {
+    const authorFollower = this.authorFollowerRepository.create(
+      createAuthorFollowerDto,
+    );
     return this.authorFollowerRepository.save(authorFollower);
   }
 
@@ -22,7 +30,7 @@ export class AuthorFollowersService {
     }
     return this.authorFollowerRepository.find({
       where: { author_id: authorId },
-      relations: ['follower']
+      relations: ['follower'],
     });
   }
 
@@ -32,7 +40,7 @@ export class AuthorFollowersService {
     }
     return this.authorFollowerRepository.find({
       where: { follower_id: userId },
-      relations: ['author']
+      relations: ['author'],
     });
   }
 

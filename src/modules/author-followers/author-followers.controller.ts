@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Delete, Param, UseGuards, HttpException, HttpStatus, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Param,
+  UseGuards,
+  HttpException,
+  HttpStatus,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthorFollowersService } from './author-followers.service';
 import { CreateAuthorFollowerDto } from './dto/create-author-follower.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -9,7 +20,9 @@ import { Audit } from '../../common/decorators/audit.decorator';
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(AuditInterceptor)
 export class AuthorFollowersController {
-  constructor(private readonly authorFollowersService: AuthorFollowersService) {}
+  constructor(
+    private readonly authorFollowersService: AuthorFollowersService,
+  ) {}
 
   @Post()
   @Audit({ action: 'FOLLOW_AUTHOR', resource: 'AuthorFollower' })

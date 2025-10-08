@@ -1,4 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, UseInterceptors, UploadedFile, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  HttpException,
+  HttpStatus,
+  ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
+  NotFoundException,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -93,35 +108,47 @@ export class UsersController {
 
   @Post(':id/profile')
   @Audit({ action: 'CREATE_USER_PROFILE', resource: 'UserProfile' })
-  async createProfile(@Param('id') id: string, @Body() createProfileDto: CreateUserProfileDto) {
+  async createProfile(
+    @Param('id') id: string,
+    @Body() createProfileDto: CreateUserProfileDto,
+  ) {
     createProfileDto.user_id = id;
     return this.usersService.createProfile(createProfileDto);
   }
 
   @Patch(':id/profile')
   @Audit({ action: 'UPDATE_USER_PROFILE', resource: 'UserProfile' })
-  async updateProfile(@Param('id') id: string, @Body() updateProfileDto: UpdateUserProfileDto) {
+  async updateProfile(
+    @Param('id') id: string,
+    @Body() updateProfileDto: UpdateUserProfileDto,
+  ) {
     return this.usersService.updateProfile(id, updateProfileDto);
   }
 
   @Post(':id/profile/upload')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads/profile-pictures',
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/profile-pictures',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
       },
     }),
-    fileFilter: (req, file, cb) => {
-      if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-        return cb(new Error('Only image files are allowed!'), false);
-      }
-      cb(null, true);
-    },
-  }))
+  )
   @Audit({ action: 'UPLOAD_PROFILE_PICTURE', resource: 'UserProfile' })
-  async uploadProfilePicture(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
+  async uploadProfilePicture(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     if (!file) {
       throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
     }

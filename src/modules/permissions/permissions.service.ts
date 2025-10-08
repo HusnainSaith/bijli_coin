@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Permission } from './entities/permission.entity';
@@ -10,10 +14,10 @@ import { RolePermission } from '../role-permissions/entities/role-permission.ent
 export class PermissionsService {
   constructor(
     @InjectRepository(Permission)
-  private permissionRepository: Repository<Permission>,
+    private permissionRepository: Repository<Permission>,
 
-  @InjectRepository(RolePermission) // ✅ inject
-  private rolePermissionRepository: Repository<RolePermission>,
+    @InjectRepository(RolePermission) // ✅ inject
+    private rolePermissionRepository: Repository<RolePermission>,
   ) {}
 
   async create(createPermissionDto: CreatePermissionDto): Promise<Permission> {
@@ -29,17 +33,25 @@ export class PermissionsService {
     if (!id) {
       throw new BadRequestException('Invalid permission ID');
     }
-    const permission = await this.permissionRepository.findOne({ where: { id } });
+    const permission = await this.permissionRepository.findOne({
+      where: { id },
+    });
     if (!permission) {
       throw new NotFoundException(`Permission not found with id: ${id}`);
     }
     return permission;
   }
 
-  async update(id: string, updatePermissionDto: UpdatePermissionDto): Promise<Permission> {
+  async update(
+    id: string,
+    updatePermissionDto: UpdatePermissionDto,
+  ): Promise<Permission> {
     if (!id) throw new BadRequestException('Invalid permission ID');
 
-    const result = await this.permissionRepository.update(id, updatePermissionDto);
+    const result = await this.permissionRepository.update(
+      id,
+      updatePermissionDto,
+    );
     if (result.affected === 0) {
       throw new NotFoundException(`Permission not found with id: ${id}`);
     }
@@ -105,6 +117,4 @@ export class PermissionsService {
   //     relations: ['permission'],
   //   });
   // }
-
-
 }

@@ -10,12 +10,12 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { UsersModule } from '../users/users.module';
 import { RolesModule } from '../roles/roles.module';
-import { AuditLogsModule } from '../audit-logs/audit-logs.module';  
+import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 
 @Module({
   imports: [
     UsersModule,
-    RolesModule, 
+    RolesModule,
     PassportModule,
     TypeOrmModule.forFeature([RefreshToken]),
     AuditLogsModule,

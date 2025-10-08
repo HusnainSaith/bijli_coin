@@ -22,7 +22,7 @@ export class ViewsService {
     }
     return this.viewRepository.find({
       where: { user_id: userId },
-      relations: ['user', 'post']
+      relations: ['user', 'post'],
     });
   }
 
@@ -32,7 +32,7 @@ export class ViewsService {
     }
     return this.viewRepository.find({
       where: { viewable_id: postId, viewable_type: 'post' },
-      relations: ['user']
+      relations: ['user'],
     });
   }
 }

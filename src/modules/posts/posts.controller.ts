@@ -1,4 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, HttpStatus, HttpException, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  HttpStatus,
+  HttpException,
+  UseInterceptors,
+  UploadedFile,
+  Req,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -17,14 +32,17 @@ export class PostsController {
     private readonly viewsService: ViewsService,
   ) {}
 
- @Post()
+  @Post()
   @Audit({ action: 'CREATE_POST', resource: 'Post' })
   async create(@Body() createPostDto: CreatePostDto) {
     return this.postsService.create(createPostDto);
   }
 
   @Get()
-  async findAll(@Query('category') categoryId?: string, @Query('user') userId?: string) {
+  async findAll(
+    @Query('category') categoryId?: string,
+    @Query('user') userId?: string,
+  ) {
     return this.postsService.findAll({ categoryId, userId });
   }
 
@@ -33,7 +51,7 @@ export class PostsController {
   async findOne(@Param('id') id: string, @Req() req: any) {
     const post = await this.postsService.findOne(id);
     await this.postsService.incrementViews(id);
-    
+
     // Create view record
     await this.viewsService.create({
       user_id: req.user?.id,
@@ -41,7 +59,7 @@ export class PostsController {
       viewable_id: id,
       ip_address: req.ip || req.connection.remoteAddress || 'unknown',
     });
-    
+
     return post;
   }
 

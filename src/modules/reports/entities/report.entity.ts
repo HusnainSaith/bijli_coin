@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { reason_enum, ReportStatus_enum } from '../dto/create-report.dto';
 
@@ -31,10 +39,8 @@ export class Report {
   @UpdateDateColumn()
   updated_at: Date;
 
-// report.entity.ts
-@ManyToOne(() => User, (user) => user.reports, { eager: false })
-  @JoinColumn({ name: 'reporter_id' })  // links column reporter_id
+  // report.entity.ts
+  @ManyToOne(() => User, (user) => user.reports, { eager: false })
+  @JoinColumn({ name: 'reporter_id' }) // links column reporter_id
   user: User;
-
-
 }

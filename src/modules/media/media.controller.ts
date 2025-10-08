@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  HttpException,
+  HttpStatus,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { MediaService } from './media.service';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
@@ -29,7 +41,10 @@ export class MediaController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateMediaDto: UpdateMediaDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateMediaDto: UpdateMediaDto,
+  ) {
     return this.mediaService.update(id, updateMediaDto);
   }
 

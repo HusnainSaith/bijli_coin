@@ -30,7 +30,7 @@ export class CreateReportDto {
 
   @IsNotEmpty()
   @IsEnum(reason_enum)
-  reason: (reason_enum)
+  reason: reason_enum;
 
   @IsOptional()
   @IsString()

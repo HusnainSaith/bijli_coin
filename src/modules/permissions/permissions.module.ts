@@ -8,11 +8,12 @@ import { RolePermissionsModule } from '../role-permissions/role-permissions.modu
 import { PermissionsGuard } from 'src/common/guards/permissions.guard';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Permission,RolePermission]),
-RolePermissionsModule
-],
+  imports: [
+    TypeOrmModule.forFeature([Permission, RolePermission]),
+    RolePermissionsModule,
+  ],
   controllers: [PermissionsController],
-  providers: [PermissionsService,PermissionsGuard],
-   exports: [PermissionsService, PermissionsGuard],
+  providers: [PermissionsService, PermissionsGuard],
+  exports: [PermissionsService, PermissionsGuard],
 })
 export class PermissionsModule {}

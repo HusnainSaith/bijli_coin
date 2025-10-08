@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RolePermission } from './entities/role-permission.entity';
@@ -11,44 +15,53 @@ export class RolePermissionsService {
     private rolePermissionRepository: Repository<RolePermission>,
   ) {}
 
-async assignPermissionsToRole(roleId: string, permissionIds: string[]) {
-  if (!roleId || !Array.isArray(permissionIds) || permissionIds.length === 0) {
-    throw new BadRequestException('Invalid roleId or permissionIds');
+  async assignPermissionsToRole(roleId: string, permissionIds: string[]) {
+    if (
+      !roleId ||
+      !Array.isArray(permissionIds) ||
+      permissionIds.length === 0
+    ) {
+      throw new BadRequestException('Invalid roleId or permissionIds');
+    }
+
+    const rolePermissions = permissionIds.map((pid) =>
+      this.rolePermissionRepository.create({
+        role_id: roleId,
+        permission_id: pid,
+      }),
+    );
+
+    return this.rolePermissionRepository.save(rolePermissions);
   }
 
-  const rolePermissions = permissionIds.map((pid) =>
-    this.rolePermissionRepository.create({ role_id: roleId, permission_id: pid }),
-  );
+  async updatePermissionsOfRole(roleId: string, permissionIds: string[]) {
+    if (!roleId) {
+      throw new BadRequestException('Invalid roleId');
+    }
 
-  return this.rolePermissionRepository.save(rolePermissions);
-}
+    // First delete existing role-permission mappings
+    await this.rolePermissionRepository.delete({ role_id: roleId });
 
-async updatePermissionsOfRole(roleId: string, permissionIds: string[]) {
-  if (!roleId) {
-    throw new BadRequestException('Invalid roleId');
+    // Now insert new mappings
+    const rolePermissions = permissionIds.map((pid) =>
+      this.rolePermissionRepository.create({
+        role_id: roleId,
+        permission_id: pid,
+      }),
+    );
+
+    return this.rolePermissionRepository.save(rolePermissions);
   }
 
-  // First delete existing role-permission mappings
-  await this.rolePermissionRepository.delete({ role_id: roleId });
-
-  // Now insert new mappings
-  const rolePermissions = permissionIds.map((pid) =>
-    this.rolePermissionRepository.create({ role_id: roleId, permission_id: pid }),
-  );
-
-  return this.rolePermissionRepository.save(rolePermissions);
-}
-
-
-async findByRole(roleId: string): Promise<RolePermission[]> {
-  if (!roleId) {
-    throw new BadRequestException('Invalid role ID');
+  async findByRole(roleId: string): Promise<RolePermission[]> {
+    if (!roleId) {
+      throw new BadRequestException('Invalid role ID');
+    }
+    return this.rolePermissionRepository.find({
+      where: { role_id: roleId }, // ✅ UUID
+      relations: ['permission'],
+    });
   }
-  return this.rolePermissionRepository.find({
-    where: { role_id: roleId }, // ✅ UUID
-    relations: ['permission'],
-  });
-}
 
   async remove(id: string): Promise<void> {
     const result = await this.rolePermissionRepository.delete(id);

@@ -41,7 +41,7 @@ import { AuditLogsModule } from '../audit-logs/audit-logs.module';
       AuthorFollower,
       Notification,
       Category,
-      Role
+      Role,
     ]),
     AuditLogsModule,
   ],

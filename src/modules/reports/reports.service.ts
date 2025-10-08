@@ -84,9 +84,9 @@ export class ReportsService {
     }
 
     const reports = await this.reportRepository.find({
-  where: { user: { id: userId } }, // relation field
-  relations: ['user'],
-});
+      where: { user: { id: userId } }, // relation field
+      relations: ['user'],
+    });
 
     if (!reports || reports.length === 0) {
       throw new NotFoundException(

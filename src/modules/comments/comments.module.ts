@@ -8,7 +8,10 @@ import { Post } from '../posts/entities/post.entity';
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comment, CommentReply, Post]), AuditLogsModule],
+  imports: [
+    TypeOrmModule.forFeature([Comment, CommentReply, Post]),
+    AuditLogsModule,
+  ],
   controllers: [CommentsController],
   providers: [CommentsService],
 })

@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Delete, Param, UseGuards, HttpException, HttpStatus, ParseIntPipe, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Param,
+  UseGuards,
+  HttpException,
+  HttpStatus,
+  ParseIntPipe,
+  UseInterceptors,
+} from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';

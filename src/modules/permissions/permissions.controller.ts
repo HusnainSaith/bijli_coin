@@ -41,7 +41,10 @@ export class PermissionsController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updatePermissionDto: UpdatePermissionDto,
+  ) {
     return this.permissionsService.update(id, updatePermissionDto);
   }
 
@@ -83,5 +86,4 @@ export class PermissionsController {
   // async getPermissionsOfRole(@Param('roleId') roleId: string) {
   //   return this.permissionsService.getPermissionsOfRole(roleId);
   // }
-
 }

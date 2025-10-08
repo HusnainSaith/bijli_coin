@@ -19,9 +19,9 @@ export class RolesService {
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
- @InjectRepository(RolePermission)   // ✅ Add this
-  private rolePermissionRepository: Repository<RolePermission>,
-) {}
+    @InjectRepository(RolePermission) // ✅ Add this
+    private rolePermissionRepository: Repository<RolePermission>,
+  ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
     const role = this.roleRepository.create(createRoleDto);
@@ -62,26 +62,25 @@ export class RolesService {
   }
 
   async getPermissions(roleId: string) {
-  if (!roleId) {
-    throw new BadRequestException('Invalid role ID');
+    if (!roleId) {
+      throw new BadRequestException('Invalid role ID');
+    }
+
+    // ✅ Check role exists
+    const role = await this.roleRepository.findOne({ where: { id: roleId } });
+    if (!role) {
+      throw new NotFoundException(`Role not found with id: ${roleId}`);
+    }
+
+    // ✅ Get all permissions linked to this role
+    const rolePermissions = await this.rolePermissionRepository.find({
+      where: { role_id: roleId },
+      relations: ['permission'],
+    });
+
+    // ✅ Extract and return just the permissions
+    return rolePermissions.map((rp) => rp.permission);
   }
-
-  // ✅ Check role exists
-  const role = await this.roleRepository.findOne({ where: { id: roleId } });
-  if (!role) {
-    throw new NotFoundException(`Role not found with id: ${roleId}`);
-  }
-
-  // ✅ Get all permissions linked to this role
-  const rolePermissions = await this.rolePermissionRepository.find({
-    where: { role_id: roleId },
-    relations: ['permission'],
-  });
-
-  // ✅ Extract and return just the permissions
-  return rolePermissions.map((rp) => rp.permission);
-}
-
 
   async getUsers(roleId: string): Promise<User[]> {
     if (!roleId) throw new BadRequestException('Invalid role ID');

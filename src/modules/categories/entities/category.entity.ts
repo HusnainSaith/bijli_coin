@@ -1,8 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity('categories')
 export class Category {
-    @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -11,7 +19,7 @@ export class Category {
   @Column({ unique: true })
   slug: string;
 
-   @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   parent_id?: string;
 
   @Column({ default: 0 })

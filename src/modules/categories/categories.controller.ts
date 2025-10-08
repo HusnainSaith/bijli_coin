@@ -1,4 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, ParseUUIDPipe, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  HttpException,
+  HttpStatus,
+  ParseIntPipe,
+  ParseUUIDPipe,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -27,25 +41,25 @@ export class CategoriesController {
     return this.categoriesService.findAll();
   }
 
-@Get(':id')
-async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-  return this.categoriesService.findOne(id);
-}
+  @Get(':id')
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.categoriesService.findOne(id);
+  }
 
-@Patch(':id')
-@Audit({ action: 'UPDATE_CATEGORY', resource: 'Category' })
-async update(
-  @Param('id', new ParseUUIDPipe()) id: string,
-  @Body() updateCategoryDto: UpdateCategoryDto,
-) {
-  return this.categoriesService.update(id, updateCategoryDto);
-}
+  @Patch(':id')
+  @Audit({ action: 'UPDATE_CATEGORY', resource: 'Category' })
+  async update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ) {
+    return this.categoriesService.update(id, updateCategoryDto);
+  }
 
-@Delete(':id')
-@Audit({ action: 'DELETE_CATEGORY', resource: 'Category' })
-async remove(@Param('id', new ParseUUIDPipe()) id: string) {
-  return this.categoriesService.remove(id);
-}
+  @Delete(':id')
+  @Audit({ action: 'DELETE_CATEGORY', resource: 'Category' })
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.categoriesService.remove(id);
+  }
 
   @Get(':id/posts')
   async getPosts(@Param('id', new ParseUUIDPipe()) id: string) {

@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  HttpException,
+  HttpStatus,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AnswersService } from './answers.service';
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
@@ -34,7 +46,10 @@ export class AnswersController {
 
   @Patch(':id')
   @Audit({ action: 'UPDATE_ANSWER', resource: 'Answer' })
-  async update(@Param('id') id: string, @Body() updateAnswerDto: UpdateAnswerDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateAnswerDto: UpdateAnswerDto,
+  ) {
     return this.answersService.update(id, updateAnswerDto);
   }
 

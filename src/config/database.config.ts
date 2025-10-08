@@ -2,7 +2,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
-import { DataSource, DataSourceOptions } from "typeorm/data-source/index.js";
+import { DataSource, DataSourceOptions } from 'typeorm/data-source/index.js';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ export const dataSourceOptions: DataSourceOptions = {
   // This matches all .entity.ts/.js files inside all modules/entities folders
   entities: [
     __dirname + '/../modules/**/entities/*.entity.{ts,js}',
-    'src/modules/**/entities/*.entity.{ts,js}'
+    'src/modules/**/entities/*.entity.{ts,js}',
   ],
 
   // This matches migration files in src/database/migrations folder
@@ -34,4 +34,3 @@ export const dataSourceOptions: DataSourceOptions = {
 
 const dataSource = new DataSource(dataSourceOptions);
 export default dataSource;
-

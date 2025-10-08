@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
@@ -15,7 +19,7 @@ export class CommentsService {
 
     @InjectRepository(CommentReply)
     private commentReplyRepository: Repository<CommentReply>,
-    
+
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
   ) {}
@@ -23,13 +27,13 @@ export class CommentsService {
   async create(createCommentDto: CreateCommentDto): Promise<Comment> {
     const comment = this.commentRepository.create(createCommentDto);
     const savedComment = await this.commentRepository.save(comment);
-    
+
     await this.postRepository.increment(
-      { id: createCommentDto.post_id }, 
-      'comments_count', 
-      1
+      { id: createCommentDto.post_id },
+      'comments_count',
+      1,
     );
-    
+
     return savedComment;
   }
 
@@ -38,12 +42,12 @@ export class CommentsService {
   }
 
   async findOne(id: string): Promise<Comment> {
-    if (!id ) {
+    if (!id) {
       throw new BadRequestException('Invalid comment ID');
     }
     const comment = await this.commentRepository.findOne({
       where: { id },
-      relations: ['user', 'post']
+      relations: ['user', 'post'],
     });
     if (!comment) {
       throw new NotFoundException('Comment not found');
@@ -51,7 +55,10 @@ export class CommentsService {
     return comment;
   }
 
-  async update(id: string, updateCommentDto: UpdateCommentDto): Promise<Comment> {
+  async update(
+    id: string,
+    updateCommentDto: UpdateCommentDto,
+  ): Promise<Comment> {
     const result = await this.commentRepository.update(id, updateCommentDto);
     if (result.affected === 0) {
       throw new NotFoundException('Comment not found');
@@ -64,35 +71,34 @@ export class CommentsService {
     if (!comment) {
       throw new NotFoundException('Comment not found');
     }
-    
+
     const result = await this.commentRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Comment not found');
     }
-    
+
     await this.postRepository.decrement(
-      { id: comment.post_id }, 
-      'comments_count', 
-      1
+      { id: comment.post_id },
+      'comments_count',
+      1,
     );
   }
 
-async getReplies(commentId: string) {
-  if (!commentId) {
-    throw new BadRequestException('Invalid comment ID');
+  async getReplies(commentId: string) {
+    if (!commentId) {
+      throw new BadRequestException('Invalid comment ID');
+    }
+
+    const replies = await this.commentReplyRepository.find({
+      where: { comment_id: commentId },
+      relations: ['user'], // include user info
+      order: { created_at: 'ASC' },
+    });
+
+    if (!replies || replies.length === 0) {
+      throw new NotFoundException('No replies found for this comment');
+    }
+
+    return replies;
   }
-
-  const replies = await this.commentReplyRepository.find({
-    where: { comment_id: commentId },
-    relations: ['user'],  // include user info
-    order: { created_at: 'ASC' },
-  });
-
-  if (!replies || replies.length === 0) {
-    throw new NotFoundException('No replies found for this comment');
-  }
-
-  return replies;
-}
-
 }

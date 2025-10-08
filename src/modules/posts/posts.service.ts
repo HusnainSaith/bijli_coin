@@ -20,7 +20,7 @@ export class PostsService {
     private postRepository: Repository<Post>,
   ) {}
 
-async create(createPostDto: CreatePostDto): Promise<Post> {
+  async create(createPostDto: CreatePostDto): Promise<Post> {
     try {
       const post = this.postRepository.create({
         ...createPostDto,
@@ -41,7 +41,10 @@ async create(createPostDto: CreatePostDto): Promise<Post> {
       throw error;
     }
   }
-  async findAll(filters?: { categoryId?: string; userId?: string }): Promise<Post[]> {
+  async findAll(filters?: {
+    categoryId?: string;
+    userId?: string;
+  }): Promise<Post[]> {
     const query = this.postRepository.createQueryBuilder('post');
 
     if (filters?.categoryId) {
@@ -109,70 +112,71 @@ async create(createPostDto: CreatePostDto): Promise<Post> {
     }
   }
 
-async getComments(postId: string) {
-  if (!postId) {
-    throw new BadRequestException('Invalid post ID');
+  async getComments(postId: string) {
+    if (!postId) {
+      throw new BadRequestException('Invalid post ID');
+    }
+
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['comments'],
+    });
+
+    if (!post) {
+      throw new NotFoundException(`Post not found with id: ${postId}`);
+    }
+
+    return post.comments;
   }
 
-  const post = await this.postRepository.findOne({
-    where: { id: postId },
-    relations: ['comments'],
-  });
+  async getMedia(postId: string) {
+    if (!postId) {
+      throw new BadRequestException('Invalid post ID');
+    }
 
-  if (!post) {
-    throw new NotFoundException(`Post not found with id: ${postId}`);
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['media'],
+    });
+
+    if (!post) {
+      throw new NotFoundException(`Post not found with id: ${postId}`);
+    }
+
+    return post.media;
   }
 
-  return post.comments;
+  async getTags(postId: string) {
+    if (!postId) {
+      throw new BadRequestException('Invalid post ID');
+    }
+
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['tags'],
+    });
+
+    if (!post) {
+      throw new NotFoundException(`Post not found with id: ${postId}`);
+    }
+
+    return post.tags;
+  }
+
+  async getReactions(postId: string) {
+    if (!postId) {
+      throw new BadRequestException('Invalid post ID');
+    }
+
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['reactions'],
+    });
+
+    if (!post) {
+      throw new NotFoundException(`Post not found with id: ${postId}`);
+    }
+
+    return post.reactions;
+  }
 }
-
-async getMedia(postId: string) {
-  if (!postId) {
-    throw new BadRequestException('Invalid post ID');
-  }
-
-  const post = await this.postRepository.findOne({
-    where: { id: postId },
-    relations: ['media'],
-  });
-
-  if (!post) {
-    throw new NotFoundException(`Post not found with id: ${postId}`);
-  }
-
-  return post.media;
-}
-
-async getTags(postId: string) {
-  if (!postId) {
-    throw new BadRequestException('Invalid post ID');
-  }
-
-  const post = await this.postRepository.findOne({
-    where: { id: postId },
-    relations: ['tags'],
-  });
-
-  if (!post) {
-    throw new NotFoundException(`Post not found with id: ${postId}`);
-  }
-
-  return post.tags;
-}
-
-async getReactions(postId: string) {
-  if (!postId) {
-    throw new BadRequestException('Invalid post ID');
-  }
-
-  const post = await this.postRepository.findOne({
-    where: { id: postId },
-    relations: ['reactions'],
-  });
-
-  if (!post) {
-    throw new NotFoundException(`Post not found with id: ${postId}`);
-  }
-
-  return post.reactions;
-}}

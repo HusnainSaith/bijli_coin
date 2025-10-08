@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Question } from './entities/question.entity';
@@ -12,7 +16,7 @@ export class QuestionsService {
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
     @InjectRepository(Answer)
-    private answersRepository:Repository<Answer>,
+    private answersRepository: Repository<Answer>,
   ) {}
 
   async create(createQuestionDto: CreateQuestionDto): Promise<Question> {
@@ -25,12 +29,12 @@ export class QuestionsService {
   }
 
   async findOne(id: string): Promise<Question> {
-    if (!id ) {
+    if (!id) {
       throw new BadRequestException('Invalid question ID');
     }
     const question = await this.questionRepository.findOne({
       where: { id },
-      relations: ['user']
+      relations: ['user'],
     });
     if (!question) {
       throw new NotFoundException('Question not found');
@@ -38,7 +42,10 @@ export class QuestionsService {
     return question;
   }
 
-  async update(id: string, updateQuestionDto: UpdateQuestionDto): Promise<Question> {
+  async update(
+    id: string,
+    updateQuestionDto: UpdateQuestionDto,
+  ): Promise<Question> {
     const result = await this.questionRepository.update(id, updateQuestionDto);
     if (result.affected === 0) {
       throw new NotFoundException('Question not found');
@@ -52,6 +59,4 @@ export class QuestionsService {
       throw new NotFoundException('Question not found');
     }
   }
-
- 
 }

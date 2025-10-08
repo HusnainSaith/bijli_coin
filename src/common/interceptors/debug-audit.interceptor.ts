@@ -1,4 +1,9 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -13,8 +18,11 @@ export class DebugAuditInterceptor implements NestInterceptor {
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const auditOptions = this.reflector.get<AuditOptions>(AUDIT_KEY, context.getHandler());
-    
+    const auditOptions = this.reflector.get<AuditOptions>(
+      AUDIT_KEY,
+      context.getHandler(),
+    );
+
     if (!auditOptions) {
       return next.handle();
     }
@@ -22,14 +30,12 @@ export class DebugAuditInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
     const ip = request.ip || request.connection.remoteAddress;
-    
-
 
     return next.handle().pipe(
       tap(async (result) => {
         try {
           const userId = user?.id || user?.sub || null;
-          
+
           const auditData = {
             user_id: userId,
             action: auditOptions.action,
@@ -37,7 +43,7 @@ export class DebugAuditInterceptor implements NestInterceptor {
             auditable_id: result?.id || request.params?.id,
             ip_address: ip,
           };
-          
+
           console.log('Saving audit data:', auditData);
           await this.auditLogsService.create(auditData);
           console.log('Audit log saved successfully');

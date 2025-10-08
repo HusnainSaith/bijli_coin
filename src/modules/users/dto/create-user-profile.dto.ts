@@ -23,7 +23,7 @@ export class CreateUserProfileDto {
 
   @IsOptional()
   @IsString()
-  profile_picture?: string; 
+  profile_picture?: string;
 
   @IsOptional()
   @IsString()

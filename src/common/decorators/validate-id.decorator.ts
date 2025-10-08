@@ -6,6 +6,6 @@ export function ValidateId() {
   return applyDecorators(
     Transform(({ value }) => parseInt(value)),
     IsInt({ message: 'ID must be an integer' }),
-    Min(1, { message: 'ID must be greater than 0' })
+    Min(1, { message: 'ID must be greater than 0' }),
   );
 }

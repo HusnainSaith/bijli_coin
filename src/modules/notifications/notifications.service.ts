@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
@@ -20,25 +24,28 @@ export class NotificationsService {
       secure: false,
       auth: {
         user: process.env.EMAIL_USER || 'your-email@gmail.com',
-        pass: process.env.EMAIL_PASS || 'your-app-password'
-      }
+        pass: process.env.EMAIL_PASS || 'your-app-password',
+      },
     });
   }
 
- async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
-  const notification = this.notificationRepository.create({
-    userId: createNotificationDto.user_id,   
-    type: createNotificationDto.type,
-    title: createNotificationDto.title,
-    message: createNotificationDto.message,
-    isRead: createNotificationDto.is_read ?? false,
-  });
+  async create(
+    createNotificationDto: CreateNotificationDto,
+  ): Promise<Notification> {
+    const notification = this.notificationRepository.create({
+      userId: createNotificationDto.user_id,
+      type: createNotificationDto.type,
+      title: createNotificationDto.title,
+      message: createNotificationDto.message,
+      isRead: createNotificationDto.is_read ?? false,
+    });
 
-  const savedNotification = await this.notificationRepository.save(notification);
+    const savedNotification =
+      await this.notificationRepository.save(notification);
 
-  await this.sendEmailNotification(createNotificationDto);
-  return savedNotification;
-}
+    await this.sendEmailNotification(createNotificationDto);
+    return savedNotification;
+  }
 
   async sendEmailNotification(notificationData: CreateNotificationDto) {
     try {
@@ -47,7 +54,7 @@ export class NotificationsService {
         to: notificationData.userEmail || 'user@example.com',
         subject: notificationData.title || 'New Notification',
         text: notificationData.message,
-        html: `<p>${notificationData.message}</p>`
+        html: `<p>${notificationData.message}</p>`,
       };
 
       await this.transporter.sendMail(mailOptions);
@@ -61,24 +68,28 @@ export class NotificationsService {
       throw new BadRequestException('Invalid user ID');
     }
     return this.notificationRepository.find({
-    where: { userId },               // ✅ camelCase property
-    order: { createdAt: 'DESC' },    // ✅ camelCase property
-  });
+      where: { userId }, // ✅ camelCase property
+      order: { createdAt: 'DESC' }, // ✅ camelCase property
+    });
   }
 
   async markAsRead(id: string): Promise<Notification> {
-  const result = await this.notificationRepository.update(id, { isRead: true }); // camelCase
+    const result = await this.notificationRepository.update(id, {
+      isRead: true,
+    }); // camelCase
 
-  if (result.affected === 0) {
-    throw new NotFoundException('Notification not found');
-  }
+    if (result.affected === 0) {
+      throw new NotFoundException('Notification not found');
+    }
 
-  const notification = await this.notificationRepository.findOne({ where: { id } });
-  if (!notification) {
-    throw new NotFoundException('Notification not found');
+    const notification = await this.notificationRepository.findOne({
+      where: { id },
+    });
+    if (!notification) {
+      throw new NotFoundException('Notification not found');
+    }
+    return notification;
   }
-  return notification;
-}
 
   async remove(id: string): Promise<void> {
     const result = await this.notificationRepository.delete(id);

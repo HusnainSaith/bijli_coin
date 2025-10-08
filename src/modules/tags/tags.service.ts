@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tag } from './entities/tag.entity';
@@ -21,7 +25,7 @@ export class TagsService {
     return this.tagRepository.find();
   }
 
-  async findOne(id:string): Promise<Tag> {
+  async findOne(id: string): Promise<Tag> {
     if (!id) {
       throw new BadRequestException('Invalid tag ID');
     }

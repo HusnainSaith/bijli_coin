@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { Role } from '../../../common/enums/role.enum';
 import { Report } from '../../reports/entities/report.entity';
 export enum UserStatus {
@@ -35,6 +42,6 @@ export class User {
 
   @UpdateDateColumn()
   updated_at: Date;
-@OneToMany(() => Report, (report) => report.user)
-reports: Report[];
+  @OneToMany(() => Report, (report) => report.user)
+  reports: Report[];
 }

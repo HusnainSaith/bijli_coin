@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Bookmark } from './entities/bookmark.entity';
@@ -22,7 +26,7 @@ export class BookmarksService {
     }
     return this.bookmarkRepository.find({
       where: { user_id: userId },
-      relations: ['post']
+      relations: ['post'],
     });
   }
 
