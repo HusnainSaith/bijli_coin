@@ -144,7 +144,14 @@ async function seedComprehensive() {
     const users: User[] = [];
     for (const userData of usersData) {
       let user = await userRepo.findOne({ where: { email: userData.email } });
-      if (!user) user = await userRepo.save(userData);
+      if (!user) {
+        user = await userRepo.save(userData);
+      } else {
+        // Update password for existing users to ensure consistency
+        await userRepo.update(user.id, { password: hashedPwd });
+        const updatedUser = await userRepo.findOne({ where: { email: userData.email } });
+        if (updatedUser) user = updatedUser;
+      }
       users.push(user);
     }
     console.log(`  ✓ ${users.length} users`);
@@ -231,7 +238,12 @@ async function seedComprehensive() {
       comments_count: 5 + i,
       published_at: randomDate(),
     }));
-    const posts = await postRepo.save(postsData);
+    const posts: Post[] = [];
+    for (const postData of postsData) {
+      let post = await postRepo.findOne({ where: { slug: postData.slug } });
+      if (!post) post = await postRepo.save(postData);
+      posts.push(post);
+    }
     console.log(`  ✓ ${posts.length} posts`);
 
     // Drafts
@@ -241,7 +253,21 @@ async function seedComprehensive() {
       content: `Draft content ${i + 1}...`,
       category_id: categories[i % 10].id,
     }));
-    const drafts = await draftRepo.save(draftsData);
+    const drafts: Draft[] = [];
+    for (const draftData of draftsData) {
+      const existingDraft = await draftRepo.findOne({
+        where: {
+          user_id: draftData.user_id,
+          title: draftData.title,
+        },
+      });
+      if (!existingDraft) {
+        const draft = await draftRepo.save(draftData);
+        drafts.push(draft);
+      } else {
+        drafts.push(existingDraft);
+      }
+    }
     console.log(`  ✓ ${drafts.length} drafts`);
 
     // Questions
@@ -255,10 +281,16 @@ async function seedComprehensive() {
       views_count: String(50 + i * 5),
       answers_count: String(i % 5),
     }));
-    const questions = await questionRepo.save(questionsData);
+    const questions: Question[] = [];
+    for (const questionData of questionsData) {
+      let question = await questionRepo.findOne({
+        where: { slug: questionData.slug },
+      });
+      if (!question) question = await questionRepo.save(questionData);
+      questions.push(question);
+    }
     console.log(`  ✓ ${questions.length} questions`);
 
-    // ===== PHASE 3: RELATIONSHIPS =====
     console.log('\n📦 Phase 3: Relationships');
 
     // Post-Tags
