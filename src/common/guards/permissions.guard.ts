@@ -4,9 +4,19 @@ import {
   ExecutionContext,
   ForbiddenException,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
 import { RolePermissionsService } from 'src/modules/role-permissions/role-permissions.service';
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email?: string;
+    role_id?: string;
+    role?: string;
+  };
+}
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -21,12 +31,12 @@ export class PermissionsGuard implements CanActivate {
       [context.getHandler(), context.getClass()],
     );
 
-    // If route doesn’t require permissions → allow
+    // If route doesn't require permissions → allow
     if (!requiredPermissions || requiredPermissions.length === 0) {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const authHeader = request.headers.authorization;
     console.log('Auth header:', authHeader); // Debug log
 

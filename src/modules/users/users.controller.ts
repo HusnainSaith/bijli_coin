@@ -9,7 +9,6 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
-  ParseIntPipe,
   UseInterceptors,
   UploadedFile,
   NotFoundException,
@@ -38,7 +37,9 @@ export class UsersController {
     try {
       return await this.usersService.create(createUserDto);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      const message =
+        error instanceof Error ? error.message : 'Failed to create user';
+      throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
   }
 

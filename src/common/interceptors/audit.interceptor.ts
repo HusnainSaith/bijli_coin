@@ -4,11 +4,21 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuditLogsService } from '../../modules/audit-logs/audit-logs.service';
 import { AUDIT_KEY, AuditOptions } from '../decorators/audit.decorator';
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email?: string;
+    role_id?: string;
+    role?: string;
+  };
+}
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {
@@ -17,7 +27,7 @@ export class AuditInterceptor implements NestInterceptor {
     private auditLogsService: AuditLogsService,
   ) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const auditOptions = this.reflector.get<AuditOptions>(
       AUDIT_KEY,
       context.getHandler(),
@@ -27,42 +37,73 @@ export class AuditInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const forwardedFor = request.headers['x-forwarded-for'];
     const ip =
       request.ip ||
-      request.connection.remoteAddress ||
-      request.headers['x-forwarded-for'];
-    const isAuthRoute =
-      request.route?.path?.startsWith('/auth') ||
-      request.url.startsWith('/auth');
+      request.socket?.remoteAddress ||
+      (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor) ||
+      'unknown';
 
     return next.handle().pipe(
-      tap(async (result) => {
-        try {
-          let userId = null;
+      tap((result: unknown) => {
+        void (async () => {
+          try {
+            let userId: string | undefined;
 
-          // Get user ID from response only
-          if (result?.user?.id) {
-            userId = result.user.id;
-          } else if (result?.data?.user?.id) {
-            userId = result.data.user.id;
-          } else if (result?.id && auditOptions.resource === 'User') {
-            userId = result.id;
-          } else if (result?.user_id) {
-            userId = result.user_id;
+            // Get user ID from response only
+            if (result && typeof result === 'object') {
+              const res = result as Record<string, unknown>;
+              if (
+                res.user &&
+                typeof res.user === 'object' &&
+                'id' in res.user
+              ) {
+                userId = (res.user as { id: string }).id;
+              } else if (res.data && typeof res.data === 'object') {
+                const data = res.data as Record<string, unknown>;
+                if (
+                  data.user &&
+                  typeof data.user === 'object' &&
+                  'id' in data.user
+                ) {
+                  userId = (data.user as { id: string }).id;
+                }
+              } else if ('id' in res && auditOptions.resource === 'User') {
+                userId = res.id as string;
+              } else if ('user_id' in res) {
+                userId = res.user_id as string;
+              }
+            }
+
+            let auditableId: string | undefined;
+            if (result && typeof result === 'object') {
+              const res = result as Record<string, unknown>;
+              if ('id' in res) {
+                auditableId = res.id as string;
+              } else if (
+                res.user &&
+                typeof res.user === 'object' &&
+                'id' in res.user
+              ) {
+                auditableId = (res.user as { id: string }).id;
+              }
+            }
+            if (!auditableId && request.params && 'id' in request.params) {
+              auditableId = request.params.id;
+            }
+
+            await this.auditLogsService.create({
+              user_id: userId,
+              action: auditOptions.action,
+              auditable_type: auditOptions.resource,
+              auditable_id: auditableId,
+              ip_address: ip,
+            });
+          } catch (error) {
+            console.error('Audit log failed:', error);
           }
-
-          await this.auditLogsService.create({
-            user_id: userId,
-            action: auditOptions.action,
-            auditable_type: auditOptions.resource,
-            auditable_id: result?.id || result?.user?.id || request.params?.id,
-            ip_address: ip,
-          });
-        } catch (error) {
-          console.error('Audit log failed:', error);
-        }
+        })();
       }),
     );
   }

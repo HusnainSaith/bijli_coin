@@ -4,7 +4,17 @@ import {
   ExecutionContext,
   ForbiddenException,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { RolePermissionsService } from 'src/modules/role-permissions/role-permissions.service';
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email?: string;
+    role_id?: string;
+    role?: string;
+  };
+}
 
 @Injectable()
 export class AutoPermissionsGuard implements CanActivate {
@@ -55,8 +65,14 @@ export class AutoPermissionsGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const path = request.route?.path || request.url.split('?')[0];
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const routePath =
+      request.route &&
+      typeof request.route === 'object' &&
+      'path' in request.route
+        ? (request.route as { path: string }).path
+        : null;
+    const path: string = routePath || request.url.split('?')[0];
 
     // Skip permission check for auth routes
     if (path.startsWith('/auth')) {

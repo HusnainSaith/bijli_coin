@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Role } from '../../../common/enums/role.enum';
 import { Report } from '../../reports/entities/report.entity';
 export enum UserStatus {
   ACTIVE = 'active',

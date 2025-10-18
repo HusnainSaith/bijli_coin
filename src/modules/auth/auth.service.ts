@@ -16,10 +16,14 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RefreshToken } from './entities/refresh-token.entity';
-import { User } from '../users/entities/user.entity';
-import { Role } from '../../common/enums/role.enum';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 import { RolesService } from '../roles/roles.service'; // ✅ add import
+
+interface ResetPasswordPayload {
+  sub: string;
+  type: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -49,7 +53,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    const userPayload: any = {
+    const userPayload: CreateUserDto = {
       username: dto.username,
       email: dto.email,
       password: hashedPassword,
@@ -59,6 +63,7 @@ export class AuthService {
 
     const user = await this.usersService.create(userPayload);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...result } = user;
     return {
       success: true,
@@ -85,6 +90,7 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload, { expiresIn: '7d' });
     const refreshToken = await this.generateRefreshToken(user.id);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userResult } = user;
     return {
       success: true,
@@ -101,7 +107,7 @@ export class AuthService {
     // Validate refreshToken to prevent NoSQL injection
     if (
       typeof dto.refreshToken !== 'string' ||
-      !/^[A-Za-z0-9\-\._~\+\/]+=*$/.test(dto.refreshToken)
+      !/^[A-Za-z0-9\-._~+/]+=*$/.test(dto.refreshToken)
     ) {
       throw new UnauthorizedException('Invalid refresh token format');
     }
@@ -159,7 +165,7 @@ export class AuthService {
 
   async resetPassword(dto: ResetPasswordDto) {
     try {
-      const payload = this.jwtService.verify(dto.token);
+      const payload = this.jwtService.verify<ResetPasswordPayload>(dto.token);
       if (payload.type !== 'password-reset') {
         throw new UnauthorizedException('Invalid token type');
       }
@@ -176,7 +182,7 @@ export class AuthService {
         success: true,
         message: 'Password reset successfully',
       };
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }
   }

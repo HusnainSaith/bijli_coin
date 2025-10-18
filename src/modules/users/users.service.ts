@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not } from 'typeorm';
+import { Repository, Not, FindOptionsWhere, FindOptionsOrder } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserProfile } from './entities/user-profile.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -321,8 +321,8 @@ export class UsersService {
     if (!userId) throw new BadRequestException('Invalid user ID');
 
     return this.notificationRepository.find({
-      where: { userId: userId } as any,
-      order: { createdAt: 'DESC' } as any,
+      where: { userId: userId } as FindOptionsWhere<Notification>,
+      order: { createdAt: 'DESC' } as FindOptionsOrder<Notification>,
     });
   }
 }

@@ -8,18 +8,15 @@ import {
   Delete,
   Query,
   UseGuards,
-  HttpStatus,
-  HttpException,
   UseInterceptors,
-  UploadedFile,
   Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ViewsService } from '../views/views.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
 import { Audit } from '../../common/decorators/audit.decorator';
 
@@ -48,7 +45,10 @@ export class PostsController {
 
   @Get(':id')
   @Audit({ action: 'VIEW_POST', resource: 'Post' })
-  async findOne(@Param('id') id: string, @Req() req: any) {
+  async findOne(
+    @Param('id') id: string,
+    @Req() req: Request & { user?: { id: string } },
+  ) {
     const post = await this.postsService.findOne(id);
     await this.postsService.incrementViews(id);
 
@@ -57,7 +57,7 @@ export class PostsController {
       user_id: req.user?.id,
       viewable_type: 'post',
       viewable_id: id,
-      ip_address: req.ip || req.connection.remoteAddress || 'unknown',
+      ip_address: req.ip || req.socket?.remoteAddress || 'unknown',
     });
 
     return post;

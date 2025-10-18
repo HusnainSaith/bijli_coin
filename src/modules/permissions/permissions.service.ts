@@ -69,52 +69,10 @@ export class PermissionsService {
 
   async getRoles(permissionId: string) {
     if (!permissionId) throw new BadRequestException('Invalid permission ID');
-    // Later: join RolePermission table
-    return [];
+
+    return this.rolePermissionRepository.find({
+      where: { permission_id: permissionId },
+      relations: ['role'],
+    });
   }
-
-  // async assignPermissionToRole(roleId: string, permissionId: string) {
-  //   const rp = this.rolePermissionRepository.create({
-  //     role: { id: roleId } as any,
-  //     permission: { id: permissionId } as any,
-  //   });
-  //   return this.rolePermissionRepository.save(rp);
-  // }
-
-  // /** Update role's permissions (replace with new set) */
-  // async updateRolePermissions(roleId: string, permissionIds: string[]) {
-  //   // delete old
-  //   await this.rolePermissionRepository.delete({ role: { id: roleId } as any });
-
-  //   // insert new
-  //   const newRelations = permissionIds.map((pid) =>
-  //     this.rolePermissionRepository.create({
-  //       role: { id: roleId } as any,
-  //       permission: { id: pid } as any,
-  //     }),
-  //   );
-  //   return this.rolePermissionRepository.save(newRelations);
-  // }
-
-  // /** Remove a permission from a role */
-  // async removePermissionFromRole(roleId: string, permissionId: string) {
-  //   const result = await this.rolePermissionRepository.delete({
-  //     role: { id: roleId } as any,
-  //     permission: { id: permissionId } as any,
-  //   });
-
-  //   if (result.affected === 0) {
-  //     throw new NotFoundException(`Permission ${permissionId} not found for role ${roleId}`);
-  //   }
-
-  //   return { success: true, message: 'Permission removed from role' };
-  // }
-
-  // /** Get all permissions of a role */
-  // async getPermissionsOfRole(roleId: string) {
-  //   return this.rolePermissionRepository.find({
-  //     where: { role: { id: roleId } as any },
-  //     relations: ['permission'],
-  //   });
-  // }
 }
