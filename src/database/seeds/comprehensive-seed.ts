@@ -149,7 +149,9 @@ async function seedComprehensive() {
       } else {
         // Update password for existing users to ensure consistency
         await userRepo.update(user.id, { password: hashedPwd });
-        const updatedUser = await userRepo.findOne({ where: { email: userData.email } });
+        const updatedUser = await userRepo.findOne({
+          where: { email: userData.email },
+        });
         if (updatedUser) user = updatedUser;
       }
       users.push(user);
