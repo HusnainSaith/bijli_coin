@@ -108,13 +108,32 @@ export class UsersController {
   }
 
   @Post(':id/profile')
+  @UseInterceptors(
+    FileInterceptor('profile_picture', {
+      storage: diskStorage({
+        destination: './uploads/profile-pictures',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
   @Audit({ action: 'CREATE_USER_PROFILE', resource: 'UserProfile' })
   async createProfile(
     @Param('id') id: string,
     @Body() createProfileDto: CreateUserProfileDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     createProfileDto.user_id = id;
-    return this.usersService.createProfile(createProfileDto);
+    return this.usersService.createProfile(createProfileDto, file?.filename);
   }
 
   @Patch(':id/profile')

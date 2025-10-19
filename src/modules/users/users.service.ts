@@ -159,6 +159,7 @@ export class UsersService {
 
   async createProfile(
     createProfileDto: CreateUserProfileDto,
+    filename?: string,
   ): Promise<UserProfile> {
     // Check if profile already exists
     const existingProfile = await this.userProfileRepository.findOne({
@@ -167,6 +168,11 @@ export class UsersService {
 
     if (existingProfile) {
       throw new BadRequestException('User profile already exists');
+    }
+
+    // If a file was uploaded, set the profile_picture field
+    if (filename) {
+      createProfileDto.profile_picture = filename;
     }
 
     const profile = this.userProfileRepository.create(createProfileDto);

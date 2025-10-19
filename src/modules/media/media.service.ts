@@ -63,4 +63,24 @@ export class MediaService {
       relations: ['user'],
     });
   }
+
+  async createFromUpload(
+    file: Express.Multer.File,
+    userId: string,
+  ): Promise<Media> {
+    // Generate file URL (you can customize this based on your server setup)
+    const fileUrl = `/uploads/media/${file.filename}`;
+    const filePath = `uploads/media/${file.filename}`;
+
+    const createMediaDto: CreateMediaDto = {
+      user_id: userId,
+      filename: file.originalname,
+      file_path: filePath,
+      file_url: fileUrl,
+      mime_type: file.mimetype,
+      file_size: file.size,
+    };
+
+    return this.create(createMediaDto);
+  }
 }

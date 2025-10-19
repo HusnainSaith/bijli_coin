@@ -10,8 +10,12 @@ import {
   UseGuards,
   UseInterceptors,
   Req,
+  UploadedFile,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -30,9 +34,30 @@ export class PostsController {
   ) {}
 
   @Post()
+  @UseInterceptors(
+    FileInterceptor('featured_image', {
+      storage: diskStorage({
+        destination: './uploads/post-images',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
   @Audit({ action: 'CREATE_POST', resource: 'Post' })
-  async create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+  async create(
+    @Body() createPostDto: CreatePostDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.postsService.create(createPostDto, file?.filename);
   }
 
   @Get()

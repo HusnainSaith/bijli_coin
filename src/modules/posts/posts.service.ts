@@ -9,9 +9,6 @@ import { Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { ViewsService } from '../views/views.service';
-import { createClient } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class PostsService {
@@ -20,8 +17,13 @@ export class PostsService {
     private postRepository: Repository<Post>,
   ) {}
 
-  async create(createPostDto: CreatePostDto): Promise<Post> {
+  async create(createPostDto: CreatePostDto, filename?: string): Promise<Post> {
     try {
+      // If a file was uploaded, set the featured_image field
+      if (filename) {
+        createPostDto.featured_image = filename;
+      }
+
       const post = this.postRepository.create({
         ...createPostDto,
         featured_image: createPostDto.featured_image || undefined,
@@ -31,12 +33,19 @@ export class PostsService {
       });
 
       return await this.postRepository.save(post);
-    } catch (error) {
-      if (error.code === '23505') {
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === '23505'
+      ) {
         // Postgres unique constraint violation
-        throw new ConflictException(
-          error.detail || 'Post with this slug already exists',
-        );
+        const detail =
+          'detail' in error && typeof error.detail === 'string'
+            ? error.detail
+            : 'Post with this slug already exists';
+        throw new ConflictException(detail);
       }
       throw error;
     }
