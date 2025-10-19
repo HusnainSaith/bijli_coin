@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AutoPermissionsGuard } from './common/guards/auto-permissions.guard';
-import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+// import { AutoPermissionsGuard } from './common/guards/auto-permissions.guard';
+// import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -84,14 +83,14 @@ import { RolePermissionsModule } from './modules/role-permissions/role-permissio
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: AutoPermissionsGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AutoPermissionsGuard,
+    // },
   ],
 })
 export class AppModule {}

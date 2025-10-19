@@ -6,16 +6,12 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { PermissionsGuard } from 'src/common/guards/permissions.guard';
-import { Permissions } from 'src/common/decorators/permissions.decorator';
 
 @Controller('permissions')
 export class PermissionsController {
@@ -25,8 +21,10 @@ export class PermissionsController {
   async create(@Body() createPermissionDto: CreatePermissionDto) {
     try {
       return await this.permissionsService.create(createPermissionDto);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to create permission';
+      throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
   }
 

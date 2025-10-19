@@ -3,5 +3,6 @@ export enum Role {
   ADMIN = 'admin',
   USER = 'user',
   MODERATOR = 'moderator',
+  VISITOR = 'visitor',
   // Add more roles as needed
 }

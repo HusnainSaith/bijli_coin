@@ -25,7 +25,6 @@ import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
 import { Audit } from '../../common/decorators/audit.decorator';
 
 @Controller('posts')
-@UseGuards(JwtAuthGuard)
 @UseInterceptors(AuditInterceptor)
 export class PostsController {
   constructor(
@@ -34,6 +33,7 @@ export class PostsController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileInterceptor('featured_image', {
       storage: diskStorage({
@@ -89,12 +89,14 @@ export class PostsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @Audit({ action: 'UPDATE_POST', resource: 'Post' })
   async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(id, updatePostDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @Audit({ action: 'DELETE_POST', resource: 'Post' })
   async remove(@Param('id') id: string) {
     return this.postsService.remove(id);

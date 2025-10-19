@@ -6,13 +6,10 @@ import {
   Delete,
   Param,
   UseGuards,
-  HttpException,
-  HttpStatus,
   ParseIntPipe,
   Put,
 } from '@nestjs/common';
 import { RolePermissionsService } from './role-permissions.service';
-import { CreateRolePermissionDto } from './dto/create-role-permission.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('role-permissions')

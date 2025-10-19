@@ -57,7 +57,7 @@ export class AuthService {
       username: dto.username,
       email: dto.email,
       password: hashedPassword,
-      role: dto.role || 'user',
+      role: dto.role || 'visitor',
       status: dto.status,
     };
 

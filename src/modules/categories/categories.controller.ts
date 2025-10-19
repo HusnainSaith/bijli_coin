@@ -9,7 +9,6 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
-  ParseIntPipe,
   ParseUUIDPipe,
   UseInterceptors,
 } from '@nestjs/common';
@@ -21,18 +20,20 @@ import { AuditInterceptor } from '../../common/interceptors/audit.interceptor';
 import { Audit } from '../../common/decorators/audit.decorator';
 
 @Controller('categories')
-@UseGuards(JwtAuthGuard)
 @UseInterceptors(AuditInterceptor)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @Audit({ action: 'CREATE_CATEGORY', resource: 'Category' })
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     try {
       return await this.categoriesService.create(createCategoryDto);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to create category';
+      throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -47,6 +48,7 @@ export class CategoriesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @Audit({ action: 'UPDATE_CATEGORY', resource: 'Category' })
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -56,6 +58,7 @@ export class CategoriesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @Audit({ action: 'DELETE_CATEGORY', resource: 'Category' })
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.categoriesService.remove(id);
