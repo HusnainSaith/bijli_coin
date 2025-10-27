@@ -6,9 +6,6 @@ import { join } from 'path';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { AutoPermissionsGuard } from './common/guards/auto-permissions.guard';
-// import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
-
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { PostsModule } from './modules/posts/posts.module';
@@ -26,8 +23,6 @@ import { RolesModule } from './modules/roles/roles.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { ViewsModule } from './modules/views/views.module';
-// import { TrackingModule } from './modules/tracking/tracking.module';
-// import { RecommendationsModule } from './modules/recommendations/recommendations.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { AuthorFollowersModule } from './modules/author-followers/author-followers.module';
 import { CategoryFollowersModule } from './modules/category-followers/category-followers.module';
@@ -35,7 +30,6 @@ import { CommentRepliesModule } from './modules/comment-replies/comment-replies.
 import { PostMediaModule } from './modules/post-media/post-media.module';
 import { PostTagsModule } from './modules/post-tags/post-tags.module';
 import { RolePermissionsModule } from './modules/role-permissions/role-permissions.module';
-// import { FollowersModule } from './modules/followers/followers.module';
 
 @Module({
   imports: [
@@ -75,8 +69,6 @@ import { RolePermissionsModule } from './modules/role-permissions/role-permissio
     PermissionsModule,
     ReportsModule,
     ViewsModule,
-    // TrackingModule,
-    // RecommendationsModule,
     AuditLogsModule,
     AuthorFollowersModule,
     CategoryFollowersModule,
@@ -84,19 +76,8 @@ import { RolePermissionsModule } from './modules/role-permissions/role-permissio
     PostMediaModule,
     PostTagsModule,
     RolePermissionsModule,
-    // FollowersModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtAuthGuard,
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AutoPermissionsGuard,
-    // },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}
