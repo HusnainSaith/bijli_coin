@@ -59,4 +59,10 @@ export class QuestionsService {
       throw new NotFoundException('Question not found');
     }
   }
+
+  async incrementViews(id: string): Promise<Question> {
+    const question = await this.findOne(id);
+    await this.questionRepository.increment({ id }, 'views_count', 1);
+    return this.findOne(id);
+  }
 }

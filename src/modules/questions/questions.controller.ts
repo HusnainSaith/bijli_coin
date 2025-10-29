@@ -58,4 +58,9 @@ export class QuestionsController {
   async remove(@Param('id') id: string) {
     return this.questionsService.remove(id);
   }
+
+  @Patch(':id/increment-views')
+  async incrementViews(@Param('id') id: string) {
+    return this.questionsService.incrementViews(id);
+  }
 }
